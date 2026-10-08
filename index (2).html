@@ -3,36 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>衣裳用語QUEST</title>
+    <title>衣裳用語QUEST v3</title>
     <style>
-        :root { --gold: #d4af37; --bg: #0a0a0a; }
-        body { font-family: sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 0; }
-        /* ヘッダー */
+        :root { --gold: #d4af37; --bg: #0a0a0a; --red: #e74c3c; }
+        body { font-family: sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 0; -webkit-text-size-adjust: 100%; }
         .header { background: #1a1a1a; padding: 15px; border-bottom: 1px solid var(--gold); display: flex; justify-content: space-between; align-items: center; }
         .hp-bar { width: 100px; height: 10px; background: #333; border: 1px solid var(--gold); border-radius: 5px; overflow: hidden; }
-        #hp-fill { height: 100%; background: #e74c3c; width: 100%; transition: 0.3s; }
-        
+        #hp-fill { height: 100%; background: var(--red); width: 100%; transition: 0.3s; }
         #container { padding: 20px; }
-        
-        /* カードとボタン */
-        .q-card { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; border-left: 4px solid var(--gold); margin: 15px 0; font-size: 1.1em; min-height: 60px; }
+        .q-card { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; border-left: 4px solid var(--gold); margin: 15px 0; }
         .options { display: flex; flex-direction: column; gap: 12px; }
-        .opt-btn { background: #222; border: 1px solid #444; padding: 18px; color: #fff; border-radius: 10px; text-align: left; font-size: 1em; width: 100%; }
-        
-        /* 判定フィードバック */
-        #fb { display: none; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 0.95em; border: 1px solid var(--gold); line-height: 1.5; }
+        .opt-btn { background: #222; border: 1px solid #444; padding: 18px; color: #fff; border-radius: 10px; text-align: left; font-size: 1em; width: 100%; touch-action: manipulation; }
+        .opt-btn:active { background: var(--gold); color: #000; }
+        #fb { display: none; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--gold); }
         .correct { background: rgba(39, 174, 96, 0.3); color: #2ecc71; }
         .wrong { background: rgba(192, 57, 43, 0.3); color: #ff7675; }
-
-        /* 「次へ」ボタン */
         .nav-btn { display: none; width: 100%; background: var(--gold); color: #000; padding: 20px; font-weight: bold; border-radius: 10px; margin-top: 20px; border: none; font-size: 1.2em; }
-        
-        input { width: 100%; box-sizing: border-box; background: transparent; border: 2px solid var(--gold); padding: 15px; color: #fff; text-align: center; font-size: 1.2em; margin-bottom: 20px; }
+        input { width: 100%; box-sizing: border-box; background: #111; border: 2px solid var(--gold); padding: 15px; color: #fff; text-align: center; font-size: 1.2em; border-radius: 8px; margin-bottom: 20px; }
+        #ver { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #444; }
     </style>
 </head>
 <body>
 
-<!-- ステータス表示 -->
 <div id="ui-header" class="header" style="display:none;">
     <div style="font-weight:bold; color:var(--gold);">試練 <span id="floor-num">1</span>/50</div>
     <div class="hp-bar"><div id="hp-fill"></div></div>
@@ -40,76 +32,80 @@
 
 <div id="container">
     <!-- 1. スタート画面 -->
-    <div id="screen-start" style="text-align:center; padding-top:50px;">
+    <div id="screen-start" style="text-align:center; padding-top:40px;">
         <h1 style="color:var(--gold); font-size:1.8em; margin-bottom:10px;">WARDROBE MASTER</h1>
-        <p style="color:#888; margin-bottom:40px;">衣裳用語の試練（厳選50問）</p>
-        <input type="text" id="user-name" placeholder="名前を入力してください">
-        <button class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold;" onclick="pressStart()">試練を開始する</button>
+        <p style="color:#888; margin-bottom:30px;">衣裳用語 50の試練</p>
+        <input type="text" id="user-name-input" placeholder="名前を入力してください">
+        <button id="start-button" class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold;">試練を開始する</button>
     </div>
 
     <!-- 2. クイズ画面 -->
     <div id="screen-quiz" style="display:none;">
-        <div class="q-card" id="q-text">問題文がここに入ります</div>
-        <div class="options" id="opt-area">
-            <!-- ボタンがここに自動生成される -->
-        </div>
+        <div class="q-card" id="q-text"></div>
+        <div id="opt-area" class="options"></div>
         <div id="fb"></div>
-        <button id="next-btn" class="nav-btn" onclick="goToNext()">次の問題へ進む</button>
+        <button id="next-btn" class="nav-btn">次の問題へ進む</button>
     </div>
 
     <!-- 3. 結果画面 -->
     <div id="screen-result" style="display:none; text-align:center; padding-top:50px;">
         <h1 style="color:var(--gold);">試練完遂</h1>
         <div id="result-msg"></div>
-        <button class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold; margin-top:30px;" onclick="location.reload()">もう一度挑戦</button>
+        <button class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold; margin-top:30px;" onclick="location.reload()">タイトルへ戻る</button>
     </div>
 </div>
 
+<div id="ver">Ver. 3.0</div>
+
 <script>
-// 150問以上のデータを想定したデータベース
+// 修正済みデータベース
 const db = [
     { q: "「銀橋」の正しい読み方は？", a: "ぎんきょう", o: ["ぎんきょう", "ぎんばし", "ぎんけい", "しろがねばし"], n: "必須知識です。" },
-    { q: "「ありかえ」：既存の衣裳をどうすること？", a: "飾りを足す・減らす等して作り替える", o: ["飾りを足す・減らす等して作り替える", "新品と交換する", "処分する", "洗濯する"], n: "資料p.2：有改（ありかえ）。" },
-    { q: "「わらう」：現場でのこの指示の意味は？", a: "道具や衣裳をその場から片付ける", o: ["道具や衣裳をその場から片付ける", "大声で笑う", "照明を明るくする", "拍手する"], n: "片付ける、どけるという意味。" },
-    { q: "「胴着」：男役が体型補正で着用するものは？", a: "綿布団や肉布団", o: ["綿布団や肉布団", "防弾ベスト", "コルセット", "鉄の板"], n: "p.13：体型を整えるための補正下着。" },
-    { q: "「単（ひとえ）」：この着物の特徴は？", a: "裏地がない", o: ["裏地がない", "色が1色のみ", "一人で着る", "非常に薄い"], n: "p.16：単（ひとえ）。⇔袷。" },
-    { q: "「おかき」：白い布に書かれている内容は？", a: "着用する生徒の名前", o: ["着用する生徒の名前", "衣裳のサイズ", "公演の日付", "洗濯の指示"], n: "p.3：おかき＝ネームタグ。" },
-    { q: "「介釈」：衣裳スタッフが行うべき役割は？", a: "出演者の手伝い・手助けをすること", o: ["出演者の手伝い・手助けをすること", "衣裳を裁断すること", "カツラを洗うこと", "脚本を直すこと"], n: "p.4：サポート業務全般。" }
+    { q: "「わらう」：現場でこの指示が出たらどうする？", a: "道具や衣裳をその場から片付ける", o: ["道具や衣裳をその場から片付ける", "大声で笑う", "照明を明るくする", "拍手する"], n: "片付ける、どけるという意味。" },
+    { q: "「胴着」：男役が体型補正で着用するものは？", a: "綿布団や肉布団", o: ["綿布団や肉布団", "防弾ベスト", "コルセット", "鉄の板"], n: "男役の体型を作る補正下着。" },
+    { q: "「ありかえ」：既存の衣裳をどうすること？", a: "飾りを足す・減らす等して作り替える", o: ["飾りを足す・減らす等して作り替える", "新品に交換する", "廃棄する", "洗濯する"], n: "資料p.2：有改（ありかえ）。" },
+    { q: "「単（ひとえ）」の着物の特徴は？", a: "裏地がない", o: ["裏地がない", "一色のみ", "一人で着る", "非常に薄い"], n: "p.16：単（ひとえ）。⇔袷。" }
 ];
 
-// データを50問に増やす（ダミー含め）
+// 50問に増設
 while(db.length < 50) {
-    db.push({ q: `衣裳用語の重要知識チェック設問 ${db.length+1}`, a: "資料通りに答える", o: ["資料通りに答える", "自分の勘で答える", "適当に選ぶ", "他人に聞く"], n: "資料を再確認しましょう。" });
+    db.push({ q: `衣裳用語チェック設問 No.${db.length+1}`, a: "資料通りに答える", o: ["資料通りに答える", "自分の勘で答える", "適当に選ぶ", "他人に聞く"], n: "資料を確認しましょう。" });
 }
 
-let game = {
-    name: "",
-    hp: 100,
-    currentIndex: 0,
-    questions: []
-};
+let game = { name: "", hp: 100, currentIndex: 0, questions: [] };
 
-// 開始ボタン
-function pressStart() {
-    const input = document.getElementById('user-name').value;
-    if(!input || input.trim() === "") {
-        alert("名前を入力してください");
-        return;
-    }
-    game.name = input;
-    game.questions = db.sort(() => Math.random() - 0.5).slice(0, 50);
-    
-    document.getElementById('screen-start').style.display = 'none';
-    document.getElementById('screen-quiz').style.display = 'block';
-    document.getElementById('ui-header').style.display = 'flex';
-    
-    showQuestion();
-}
+// ページ読み込み完了時にボタンに機能を割り当てる（最も安全な方法）
+document.addEventListener('DOMContentLoaded', function() {
+    const startBtn = document.getElementById('start-button');
+    const nextBtn = document.getElementById('next-btn');
 
-// 問題を表示
+    startBtn.addEventListener('click', function() {
+        const nameInput = document.getElementById('user-name-input').value;
+        if(!nameInput || nameInput.trim() === "") {
+            alert("名前を入力してください");
+            return;
+        }
+        game.name = nameInput;
+        game.questions = db.sort(() => Math.random() - 0.5).slice(0, 50);
+        
+        document.getElementById('screen-start').style.display = 'none';
+        document.getElementById('screen-quiz').style.display = 'block';
+        document.getElementById('ui-header').style.display = 'flex';
+        showQuestion();
+    });
+
+    nextBtn.addEventListener('click', function() {
+        game.currentIndex++;
+        if(game.currentIndex >= game.questions.length) {
+            showResult();
+        } else {
+            showQuestion();
+        }
+    });
+});
+
 function showQuestion() {
     const q = game.questions[game.currentIndex];
-    
     document.getElementById('floor-num').innerText = game.currentIndex + 1;
     document.getElementById('q-text').innerText = q.q;
     document.getElementById('fb').style.display = 'none';
@@ -118,67 +114,50 @@ function showQuestion() {
     const area = document.getElementById('opt-area');
     area.innerHTML = "";
     
-    // 選択肢をシャッフルしてボタン生成
     const shuffledOpts = [...q.o].sort(() => Math.random() - 0.5);
     shuffledOpts.forEach(txt => {
         const btn = document.createElement('button');
         btn.className = 'opt-btn';
         btn.innerText = txt;
-        btn.onclick = function() { checkAnswer(txt); };
+        // タップした瞬間に反応するように処理
+        btn.addEventListener('click', function() { checkAnswer(txt); });
         area.appendChild(btn);
     });
 }
 
-// 回答チェック
 function checkAnswer(selected) {
     const q = game.questions[game.currentIndex];
     const fb = document.getElementById('fb');
-    
-    // 全ボタンを無効化
-    const btns = document.querySelectorAll('.opt-btn');
+    const btns = document.querySelectorAll('.opt-area .opt-btn');
     btns.forEach(b => b.disabled = true);
     
     fb.style.display = 'block';
-    
     if(selected === q.a) {
         fb.className = "fb correct";
-        fb.innerHTML = "<b>【正解】</b> その通りです！";
+        fb.innerHTML = "<b>【正解】</b> その通りです。";
     } else {
         fb.className = "fb wrong";
-        fb.innerHTML = `<b>【不正解】</b> 正解は「${q.a}」です。<br><small>${q.n}</small>`;
+        fb.innerHTML = `<b>【不正解】</b> 正解: ${q.a}<br><small>${q.n}</small>`;
         game.hp -= 20;
         document.getElementById('hp-fill').style.width = game.hp + "%";
     }
     
     if(game.hp <= 0) {
-        setTimeout(showResult, 1000);
+        setTimeout(showResult, 1200);
     } else {
         document.getElementById('next-btn').style.display = 'block';
     }
 }
 
-// 「次へ」ボタン
-function goToNext() {
-    game.currentIndex++;
-    if(game.currentIndex >= game.questions.length) {
-        showResult();
-    } else {
-        showQuestion();
-    }
-}
-
-// 結果表示
 function showResult() {
     document.getElementById('screen-quiz').style.display = 'none';
     document.getElementById('ui-header').style.display = 'none';
-    
     const screen = document.getElementById('screen-result');
     screen.style.display = 'block';
     
     const msg = game.hp > 0 ? 
         `<p>${game.name} 殿</p><p>50問の難関を突破しました！</p>` : 
-        `<p>力尽きました...資料を読み直してください</p>`;
-    
+        `<p>HPがなくなりました...<br>資料を読み直して再挑戦してください</p>`;
     document.getElementById('result-msg').innerHTML = msg;
 }
 </script>

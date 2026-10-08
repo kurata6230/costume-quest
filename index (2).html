@@ -2,163 +2,141 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>衣裳用語QUEST v3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>衣裳用語テスト</title>
     <style>
-        :root { --gold: #d4af37; --bg: #0a0a0a; --red: #e74c3c; }
-        body { font-family: sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 0; -webkit-text-size-adjust: 100%; }
-        .header { background: #1a1a1a; padding: 15px; border-bottom: 1px solid var(--gold); display: flex; justify-content: space-between; align-items: center; }
-        .hp-bar { width: 100px; height: 10px; background: #333; border: 1px solid var(--gold); border-radius: 5px; overflow: hidden; }
-        #hp-fill { height: 100%; background: var(--red); width: 100%; transition: 0.3s; }
-        #container { padding: 20px; }
-        .q-card { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; border-left: 4px solid var(--gold); margin: 15px 0; }
-        .options { display: flex; flex-direction: column; gap: 12px; }
-        .opt-btn { background: #222; border: 1px solid #444; padding: 18px; color: #fff; border-radius: 10px; text-align: left; font-size: 1em; width: 100%; touch-action: manipulation; }
-        .opt-btn:active { background: var(--gold); color: #000; }
-        #fb { display: none; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--gold); }
-        .correct { background: rgba(39, 174, 96, 0.3); color: #2ecc71; }
-        .wrong { background: rgba(192, 57, 43, 0.3); color: #ff7675; }
-        .nav-btn { display: none; width: 100%; background: var(--gold); color: #000; padding: 20px; font-weight: bold; border-radius: 10px; margin-top: 20px; border: none; font-size: 1.2em; }
-        input { width: 100%; box-sizing: border-box; background: #111; border: 2px solid var(--gold); padding: 15px; color: #fff; text-align: center; font-size: 1.2em; border-radius: 8px; margin-bottom: 20px; }
-        #ver { position: fixed; bottom: 5px; right: 5px; font-size: 10px; color: #444; }
+        body { font-family: sans-serif; background: #000; color: #fff; margin: 0; padding: 20px; text-align: center; }
+        .gold { color: #d4af37; }
+        input { width: 100%; padding: 15px; font-size: 18px; margin-bottom: 20px; box-sizing: border-box; }
+        .btn { background: #d4af37; color: #000; border: none; padding: 20px; width: 100%; font-size: 18px; font-weight: bold; border-radius: 10px; margin-bottom: 10px; }
+        .opt { background: #333; color: #fff; text-align: left; padding: 15px; width: 100%; font-size: 16px; border: 1px solid #d4af37; border-radius: 8px; margin-bottom: 10px; }
+        #quiz-area, #result-area { display: none; }
+        .hp-bar { width: 100%; height: 10px; background: #222; margin: 10px 0; border: 1px solid #d4af37; }
+        #hp-fill { height: 100%; background: red; width: 100%; }
+        .fb { padding: 15px; margin: 10px 0; border-radius: 5px; font-weight: bold; }
+        .correct { background: green; }
+        .wrong { background: maroon; }
     </style>
 </head>
 <body>
 
-<div id="ui-header" class="header" style="display:none;">
-    <div style="font-weight:bold; color:var(--gold);">試練 <span id="floor-num">1</span>/50</div>
-    <div class="hp-bar"><div id="hp-fill"></div></div>
-</div>
-
-<div id="container">
-    <!-- 1. スタート画面 -->
-    <div id="screen-start" style="text-align:center; padding-top:40px;">
-        <h1 style="color:var(--gold); font-size:1.8em; margin-bottom:10px;">WARDROBE MASTER</h1>
-        <p style="color:#888; margin-bottom:30px;">衣裳用語 50の試練</p>
-        <input type="text" id="user-name-input" placeholder="名前を入力してください">
-        <button id="start-button" class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold;">試練を開始する</button>
+    <!-- 1. 開始画面 -->
+    <div id="start-area">
+        <h1 class="gold">WARDROBE QUEST</h1>
+        <p>衣裳用語 50問テスト</p>
+        <input type="text" id="p-name" placeholder="なまえを入力">
+        <button class="btn" onclick="gameStart()">テストを開始する</button>
     </div>
 
     <!-- 2. クイズ画面 -->
-    <div id="screen-quiz" style="display:none;">
-        <div class="q-card" id="q-text"></div>
-        <div id="opt-area" class="options"></div>
-        <div id="fb"></div>
-        <button id="next-btn" class="nav-btn">次の問題へ進む</button>
+    <div id="quiz-area">
+        <div style="display:flex; justify-content: space-between;">
+            <span id="floor-txt">1/50</span>
+            <div class="hp-bar" style="width:150px;"><div id="hp-fill"></div></div>
+        </div>
+        <h3 id="q-text" style="min-height:60px; margin-top:20px;">問題文</h3>
+        <div id="opt-buttons"></div>
+        <div id="feedback" style="display:none;"></div>
+        <button id="next-btn" class="btn" style="display:none; margin-top:20px;" onclick="showNext()">次へ進む</button>
     </div>
 
-    <!-- 3. 結果画面 -->
-    <div id="screen-result" style="display:none; text-align:center; padding-top:50px;">
-        <h1 style="color:var(--gold);">試練完遂</h1>
-        <div id="result-msg"></div>
-        <button class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold; margin-top:30px;" onclick="location.reload()">タイトルへ戻る</button>
+    <!-- 3. 終了画面 -->
+    <div id="result-area">
+        <h1 class="gold">終了</h1>
+        <div id="res-msg"></div>
+        <button class="btn" onclick="location.reload()">タイトルへ戻る</button>
     </div>
-</div>
-
-<div id="ver">Ver. 3.0</div>
 
 <script>
-// 修正済みデータベース
+// データ (銀橋・カット会議・わらう等)
 const db = [
     { q: "「銀橋」の正しい読み方は？", a: "ぎんきょう", o: ["ぎんきょう", "ぎんばし", "ぎんけい", "しろがねばし"], n: "必須知識です。" },
-    { q: "「わらう」：現場でこの指示が出たらどうする？", a: "道具や衣裳をその場から片付ける", o: ["道具や衣裳をその場から片付ける", "大声で笑う", "照明を明るくする", "拍手する"], n: "片付ける、どけるという意味。" },
-    { q: "「胴着」：男役が体型補正で着用するものは？", a: "綿布団や肉布団", o: ["綿布団や肉布団", "防弾ベスト", "コルセット", "鉄の板"], n: "男役の体型を作る補正下着。" },
-    { q: "「ありかえ」：既存の衣裳をどうすること？", a: "飾りを足す・減らす等して作り替える", o: ["飾りを足す・減らす等して作り替える", "新品に交換する", "廃棄する", "洗濯する"], n: "資料p.2：有改（ありかえ）。" },
-    { q: "「単（ひとえ）」の着物の特徴は？", a: "裏地がない", o: ["裏地がない", "一色のみ", "一人で着る", "非常に薄い"], n: "p.16：単（ひとえ）。⇔袷。" }
+    { q: "「わらう」：現場でのこの指示の意味は？", a: "道具や衣裳をその場から片付ける", o: ["道具や衣裳をその場から片付ける", "大声で笑う", "照明を点ける", "走る"], n: "片付ける、どけるの意。" },
+    { q: "「胴着」：男役が体型補正で着用するものは？", a: "綿布団や肉布団", o: ["綿布団や肉布団", "防弾ベスト", "コルセット", "鉄の板"], n: "男役の肉布団。" },
+    { q: "「ありかえ」：既存の衣裳をどうすること？", a: "作り替える", o: ["作り替える", "処分する", "洗濯する", "予備にする"], n: "有改（ありかえ）。" },
+    { q: "「単（ひとえ）」の着物の特徴は？", a: "裏地がない", o: ["裏地がない", "色が1色のみ", "一人で着る", "非常に薄い"], n: "裏地なし。" },
+    { q: "「おかき」：白い布に書かれている内容は？", a: "着用する生徒の名前", o: ["着用する生徒の名前", "衣裳のサイズ", "公演の日付", "洗濯方法"], n: "おかき＝ネームタグ。" },
+    { q: "「介釈」：衣裳スタッフが行うべき役割は？", a: "出演者の手伝い・手助けをすること", o: ["出演者の手伝い・手助けをすること", "衣裳を裁断すること", "かつらを洗うこと", "脚本を直すこと"], n: "サポート業務全般。" }
 ];
 
-// 50問に増設
+// 50問まで自動増設
 while(db.length < 50) {
-    db.push({ q: `衣裳用語チェック設問 No.${db.length+1}`, a: "資料通りに答える", o: ["資料通りに答える", "自分の勘で答える", "適当に選ぶ", "他人に聞く"], n: "資料を確認しましょう。" });
+    db.push({ q: "衣裳用語集の確認問題 No." + (db.length + 1), a: "正解の選択肢", o: ["正解の選択肢", "まちがい1", "まちがい2", "まちがい3"], n: "資料を確認しましょう。" });
 }
 
-let game = { name: "", hp: 100, currentIndex: 0, questions: [] };
+let name = "";
+let hp = 100;
+let cur = 0;
+let questions = [];
 
-// ページ読み込み完了時にボタンに機能を割り当てる（最も安全な方法）
-document.addEventListener('DOMContentLoaded', function() {
-    const startBtn = document.getElementById('start-button');
-    const nextBtn = document.getElementById('next-btn');
+function gameStart() {
+    name = document.getElementById('p-name').value;
+    if(!name) { alert("なまえを入れてください"); return; }
+    
+    questions = db.sort(() => Math.random() - 0.5).slice(0, 50);
+    document.getElementById('start-area').style.display = 'none';
+    document.getElementById('quiz-area').style.display = 'block';
+    renderQ();
+}
 
-    startBtn.addEventListener('click', function() {
-        const nameInput = document.getElementById('user-name-input').value;
-        if(!nameInput || nameInput.trim() === "") {
-            alert("名前を入力してください");
-            return;
-        }
-        game.name = nameInput;
-        game.questions = db.sort(() => Math.random() - 0.5).slice(0, 50);
-        
-        document.getElementById('screen-start').style.display = 'none';
-        document.getElementById('screen-quiz').style.display = 'block';
-        document.getElementById('ui-header').style.display = 'flex';
-        showQuestion();
-    });
-
-    nextBtn.addEventListener('click', function() {
-        game.currentIndex++;
-        if(game.currentIndex >= game.questions.length) {
-            showResult();
-        } else {
-            showQuestion();
-        }
-    });
-});
-
-function showQuestion() {
-    const q = game.questions[game.currentIndex];
-    document.getElementById('floor-num').innerText = game.currentIndex + 1;
+function renderQ() {
+    let q = questions[cur];
+    document.getElementById('floor-txt').innerText = (cur + 1) + "/50";
     document.getElementById('q-text').innerText = q.q;
-    document.getElementById('fb').style.display = 'none';
+    document.getElementById('feedback').style.display = 'none';
     document.getElementById('next-btn').style.display = 'none';
     
-    const area = document.getElementById('opt-area');
-    area.innerHTML = "";
+    let btnArea = document.getElementById('opt-buttons');
+    btnArea.innerHTML = "";
     
-    const shuffledOpts = [...q.o].sort(() => Math.random() - 0.5);
-    shuffledOpts.forEach(txt => {
-        const btn = document.createElement('button');
-        btn.className = 'opt-btn';
-        btn.innerText = txt;
-        // タップした瞬間に反応するように処理
-        btn.addEventListener('click', function() { checkAnswer(txt); });
-        area.appendChild(btn);
+    let opts = [...q.o].sort(() => Math.random() - 0.5);
+    opts.forEach(txt => {
+        let b = document.createElement('button');
+        b.className = 'opt';
+        b.innerText = txt;
+        b.onclick = function() { check(txt); };
+        btnArea.appendChild(b);
     });
 }
 
-function checkAnswer(selected) {
-    const q = game.questions[game.currentIndex];
-    const fb = document.getElementById('fb');
-    const btns = document.querySelectorAll('.opt-area .opt-btn');
-    btns.forEach(b => b.disabled = true);
+function check(val) {
+    let q = questions[cur];
+    let fb = document.getElementById('feedback');
+    let btns = document.getElementsByClassName('opt');
+    for(let i=0; i<btns.length; i++) btns[i].disabled = true;
     
     fb.style.display = 'block';
-    if(selected === q.a) {
+    if(val === q.a) {
         fb.className = "fb correct";
-        fb.innerHTML = "<b>【正解】</b> その通りです。";
+        fb.innerText = "正解！";
     } else {
         fb.className = "fb wrong";
-        fb.innerHTML = `<b>【不正解】</b> 正解: ${q.a}<br><small>${q.n}</small>`;
-        game.hp -= 20;
-        document.getElementById('hp-fill').style.width = game.hp + "%";
+        fb.innerHTML = "不正解！正解は: " + q.a + "<br><small>" + q.n + "</small>";
+        hp -= 20;
+        document.getElementById('hp-fill').style.width = hp + "%";
     }
     
-    if(game.hp <= 0) {
-        setTimeout(showResult, 1200);
+    if(hp <= 0) {
+        setTimeout(end, 1000);
     } else {
         document.getElementById('next-btn').style.display = 'block';
     }
 }
 
-function showResult() {
-    document.getElementById('screen-quiz').style.display = 'none';
-    document.getElementById('ui-header').style.display = 'none';
-    const screen = document.getElementById('screen-result');
-    screen.style.display = 'block';
-    
-    const msg = game.hp > 0 ? 
-        `<p>${game.name} 殿</p><p>50問の難関を突破しました！</p>` : 
-        `<p>HPがなくなりました...<br>資料を読み直して再挑戦してください</p>`;
-    document.getElementById('result-msg').innerHTML = msg;
+function showNext() {
+    cur++;
+    if(cur >= questions.length) {
+        end();
+    } else {
+        renderQ();
+    }
+}
+
+function end() {
+    document.getElementById('quiz-area').style.display = 'none';
+    document.getElementById('result-area').style.display = 'block';
+    let msg = hp > 0 ? name + "さん、合格です！" : "リタイアです。資料を読み直しましょう。";
+    document.getElementById('res-msg').innerText = msg;
 }
 </script>
 </body>

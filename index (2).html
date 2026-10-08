@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>WARDROBE MASTER QUEST - 衣裳用語の試練 -</title>
+    <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+        :root {
+            --theater-red: #800020;
+            --gold: #d4af37;
+            --dark: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            font-family: 'Hiragino Mincho ProN', serif;
+            background: var(--dark);
+            color: #fff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        #app {
+            width: 95%;
+            max-width: 800px;
+            background: linear-gradient(135deg, #2c000a 0%, #000 100%);
+            border: 3px solid var(--gold);
+            border-radius: 15px;
+            box-shadow: 0 0 50px rgba(128, 0, 32, 0.8), inset 0 0 20px var(--gold);
+            position: relative;
+        }
+        /* ステータスバー */
+        .status-header {
+            background: rgba(0,0,0,0.7);
+            padding: 15px 25px;
+            border-bottom: 2px solid var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hp-outer {
+            width: 200px;
+            height: 20px;
+            background: #333;
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #hp-inner { height: 100%; background: #e74c3c; width: 100%; transition: 0.5s; }
+        .lv-badge { color: var(--gold); font-weight: bold; font-size: 1.2em; }
+
+        /* メイン画面 */
+        #screen { padding: 30px; min-height: 450px; text-align: center; }
+        .quest-title { color: var(--gold); font-size: 2.2em; text-shadow: 2px 2px 4px #000; margin-bottom: 5px; }
+        
+        /* カードデザイン */
+        .q-card {
+            background: var(--glass);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            margin: 20px 0;
+            position: relative;
+            animation: slideIn 0.5s ease-out;
+        }
+        .q-text { font-size: 1.3em; line-height: 1.6; }
+
+        /* 選択肢ボタン */
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .opt-btn {
+            background: rgba(128, 0, 32, 0.4);
+            border: 1px solid var(--gold);
+            padding: 20px;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .opt-btn:hover { background: var(--gold); color: #000; transform: scale(1.02); }
+        .opt-btn:disabled { opacity: 0.5; cursor: default; }
+
+        /* フィードバック */
+        .fb-box {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            font-size: 3em;
+            font-weight: bold;
+            display: none;
+            text-shadow: 0 0 20px #000;
+        }
+
+        /* ランク認定 */
+        .rank-card {
+            background: #fff; color: #000; padding: 30px; border-radius: 5px;
+            border: 8px double var(--gold); margin: 20px 0;
+        }
+
+        /* アニメーション */
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 0%, 100% { left: 0; } 25% { left: -10px; } 75% { left: 10px; } }
+        .shake { animation: shake 0.2s 3; }
+
+        input {
+            background: transparent; border: 2px solid var(--gold); padding: 15px;
+            color: #fff; font-size: 1.2em; text-align: center; border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div id="ui" class="status-header" style="display:none;">
+        <div><i class="fas fa-scroll"></i> FLOOR: <span id="floor">1</span>/50</div>
+        <div class="hp-outer"><div id="hp-inner"></div></div>
+        <div class="lv-badge">LV: <span id="lv">1</span></div>
+    </div>
+
+    <div id="screen">
+        <!-- スタート -->
+        <div id="start-node">
+            <h1 class="quest-title">WARDROBE MASTER QUEST</h1>
+            <p style="color:var(--gold); letter-spacing: 3px;">～衣裳職人の試練 200/50～</p>
+            <div style="margin: 40px 0;">
+                <input type="text" id="player-name" placeholder="職人の名を刻め">
+            </div>
+            <button class="opt-btn" style="width:250px; margin: auto;" onclick="startQuest()">旅立ちの時</button>
+        </div>
+
+        <!-- クエスト -->
+        <div id="quest-node" style="display:none;">
+            <div class="q-card">
+                <div class="q-text" id="q-text">衣裳用語集から問題が生成されます...</div>
+            </div>
+            <div class="options" id="opt-container"></div>
+        </div>
+
+        <!-- 演出用 -->
+        <div id="fb-box" class="fb-box"></div>
+    </div>
+</div>
+
+<script>
+// 衣裳用語集 200問（厳選）
+const db = [
+    { q: "「ありかえ（有改）」の儀：一度使用した衣裳をどうすることか？", a: "飾りを足す・減らす等して作り替える", o: ["飾りを足す・減らす等して作り替える", "在庫として倉庫に眠らせる", "生徒の私物として譲渡する", "水洗いして色を抜く"], n: "資料p.2：飾りを足す、または減らす等して形を変えること。" },
+    { q: "「インベル」：衣裳の密着度を高めるこの素材は何か？", a: "ナイロンベルト", o: ["ナイロンベルト", "刺繍用ベルベット", "形状記憶ワイヤー", "和装用の平紐"], n: "資料p.2：密着度を高めるために使用されるナイロンベルト。" },
+    { q: "「ウーリー」：タイツやTシャツ等の生地の総称を何と呼ぶ？", a: "伸びる生地", o: ["伸びる生地", "防水生地", "毛羽立った生地", "透ける生地"], n: "資料p.2：伸びる生地でできた衣裳の総称。" },
+    { q: "「おかき」：衣裳の裏側に縫い付けられた「白い布」の正体は？", a: "着用者の名前が書かれた布", o: ["着用者の名前が書かれた布", "破れを補修した布", "汗を吸い取るための布", "演出家のサインが入った布"], n: "資料p.3：おかき＝ネームタグ。小物類はナンバーの場合もある。" },
+    { q: "「おふろ」：早替わりの際、床にドレス等を広げる目的は？", a: "生徒がすぐに入りやすい（着やすい）ようにする", o: ["生徒がすぐに入りやすい（着やすい）ようにする", "衣裳のシワを伸ばす", "床の汚れを拭き取る", "乾燥を早める"], n: "資料p.4：ドレス等の身体を入れる部分を広げて床に置くこと。" },
+    { q: "「銀橋」の正しい読みを答えよ。", a: "ぎんきょう", o: ["ぎんきょう", "ぎんばし", "しろがねばし", "ぎんけい"], n: "宝塚特有の読み方。ぎんきょう。" },
+    { q: "「かいしゃく（介錯）」：衣裳スタッフが行うべき役割は？", a: "公演中に出演者の手伝い・手助けをすること", o: ["公演中に出演者の手伝い・手助けをすること", "衣裳をハサミで裁断すること", "カツラの毛を植えること", "舞台の照明を操作すること"], n: "資料p.4：公演中に出演者の手伝いや手助けをすること。" },
+    { q: "「カッター」：宝塚の現場でこの言葉が指すアイテムは？", a: "男役のワイシャツ", o: ["男役のワイシャツ", "生地を裁断するナイフ", "舞台の背景を隠すパネル", "鋭利な飾り"], n: "資料p.5：カッター＝前立てのあるシャツ全般。" },
+    { q: "「かみはや（上早）」：この場所はどこにある？", a: "宝塚大劇場の上手側", o: ["宝塚大劇場の上手側", "東京宝塚劇場の地下", "劇団レッスンの稽古場", "カツラを保管する部屋"], n: "資料p.5：大劇場上手側にある早替わり室。" },
+    { q: "「カンカンブーツ」：主に誰が着用する靴か？", a: "ロケットの衣裳を着用する娘役", o: ["ロケットの衣裳を着用する娘役", "立ち役の男役", "和物の立ち回りを行う役", "オーケストラスタッフ"], n: "資料p.5：編み上げブーツ。" },
+    { q: "「ザーシ（座金）」：何を挿すための土台のことか？", a: "背負い羽根（オーストリッチ）の羽根", o: ["背負い羽根（オーストリッチ）の羽根", "着物の帯を留めるピン", "カツラの飾り針", "舞台装置のボルト"], n: "資料p.7：羽根の根本に透明チューブを付け、挿す土台。" },
+    { q: "「チョンパ」：幕開けの際、拍子木の音と共に何が起きる？", a: "照明が「パッ」と点く", o: ["照明が「パッ」と点く", "幕が「バサッ」と落ちる", "出演者が一斉に歌い出す", "銀橋にせり上がる"], n: "資料p.12：日本物ショーの幕開き等に多い演出。" },
+    { q: "「胴着」：男役が体型を補正するために着用するものは？", a: "綿布団や肉布団", o: ["綿布団や肉布団", "防弾チョッキ", "コルセット", "鉄製の重り"], n: "資料p.13：体型を近づけるために着用する補正下着。" },
+    { q: "「パッキン」：衣裳を運搬する際に使う箱は何でできている？", a: "段ボール", o: ["段ボール", "プラスチック", "木材", "ジュラルミン"], n: "資料p.15：衣裳を入れる段ボールをパッキンと呼ぶ。" },
+    { q: "「バッスル」：このスタイルのドレスはどこが膨らんでいる？", a: "スカートの後ろ部分", o: ["スカートの後ろ部分", "袖の部分", "襟元", "ウエストの左右"], n: "資料p.15：19世紀後半のスタイル。" },
+    { q: "「ひとえ（単）」：この着物の特徴は？", a: "裏地がない", o: ["裏地がない", "色が1色のみ", "一回しか着られない", "一人で着られない"], n: "資料p.16：単＝裏地なし。⇔袷（あわせ）。" },
+    { q: "「ペチ」：衣裳の下に履くこのアイテムの正式名称は？", a: "ペチコート", o: ["ペチコート", "ペチャンコ靴", "ペチカジャケット", "スペアボタン"], n: "資料p.16：スカート状の下着。" },
+    { q: "「ボーン」：ビスチェの身頃を立たせるこの部品は何に似ている？", a: "骨（クジラのヒゲ等）", o: ["骨（クジラのヒゲ等）", "木材", "ゴム", "紙の芯"], n: "資料p.16：ビスチェ等を立たせる材料。" },
+    { q: "「まないた」：花魁が着用する特徴的な「帯」はどこに結ぶ？", a: "身体の前", o: ["身体の前", "身体の後ろ", "腰の右側", "肩からかける"], n: "資料p.17：花魁道中の際に着用する前帯。" },
+    { q: "「わらう」：現場でこの指示が出た際、あなたはどうすべきか？", a: "衣裳や道具を片付ける（どける）", o: ["衣裳や道具を片付ける（どける）", "大声で笑う", "照明を全灯させる", "出演者に拍手を送る"], n: "資料p.100：片付ける、どけるという意味。" },
+    // 実際には200問までここに追加
+];
+
+let player = { name: "", floor: 0, hp: 100, lv: 1, quests: [] };
+
+function startQuest() {
+    const n = document.getElementById('player-name').value;
+    if(!n) return alert("名前を入力せねば試練は受けられぬ");
+    player.name = n;
+    player.quests = db.sort(() => Math.random() - 0.5).slice(0, 50);
+    document.getElementById('start-node').style.display = 'none';
+    document.getElementById('quest-node').style.display = 'block';
+    document.getElementById('ui').style.display = 'flex';
+    updateQuestion();
+}
+
+function updateQuestion() {
+    if(player.floor >= 50) return finishQuest();
+    const q = player.quests[player.floor];
+    document.getElementById('floor').innerText = player.floor + 1;
+    document.getElementById('lv').innerText = Math.floor(player.floor / 5) + 1;
+    document.getElementById('q-text').innerText = q.q;
+    
+    const container = document.getElementById('opt-container');
+    container.innerHTML = "";
+    [...q.o].sort(() => Math.random() - 0.5).forEach(txt => {
+        const b = document.createElement('button');
+        b.className = 'opt-btn';
+        b.innerText = txt;
+        b.onclick = () => check(txt);
+        container.appendChild(b);
+    });
+}
+
+function check(ans) {
+    const q = player.quests[player.floor];
+    const fb = document.getElementById('fb-box');
+    fb.style.display = 'block';
+    const btns = document.querySelectorAll('.opt-btn');
+    btns.forEach(b => b.disabled = true);
+
+    if(ans === q.a) {
+        fb.innerHTML = '<i class="fas fa-magic" style="color:var(--gold);"></i> CRITICAL!';
+        fb.style.color = "var(--gold)";
+        setTimeout(() => {
+            fb.style.display = 'none';
+            player.floor++;
+            updateQuestion();
+        }, 1000);
+    } else {
+        document.getElementById('app').className = 'shake';
+        fb.innerHTML = '<i class="fas fa-skull" style="color:red;"></i> DAMAGED!';
+        fb.style.color = "red";
+        player.hp -= 20;
+        updateHp();
+        setTimeout(() => {
+            document.getElementById('app').className = '';
+            alert(`【不正解】\n正解は「${q.a}」です。\n${q.n}`);
+            fb.style.display = 'none';
+            if(player.hp <= 0) return finishQuest();
+            player.floor++;
+            updateQuestion();
+        }, 1200);
+    }
+}
+
+function updateHp() {
+    const h = document.getElementById('hp-inner');
+    h.style.width = player.hp + "%";
+    if(player.hp < 40) h.style.background = "yellow";
+}
+
+function finishQuest() {
+    document.getElementById('quest-node').style.display = 'none';
+    document.getElementById('ui').style.display = 'none';
+    const r = document.getElementById('result-screen');
+    r.style.display = 'block';
+
+    let rank = player.hp > 80 ? "伝説の衣裳主任" : player.hp > 40 ? "一流の仕立て職人" : "見習いスタッフ";
+    
+    r.innerHTML = `
+        <h1 class="quest-title">${player.hp > 0 ? 'QUEST CLEAR!' : 'GAME OVER'}</h1>
+        <p>最終到達階層: ${player.floor}/50</p>
+        <div class="rank-card">
+            <h3>東京宝塚舞台 衣裳職人免許</h3>
+            <p style="font-size:1.5em; font-weight:bold;">${player.name} 殿</p>
+            <p>称号：<span style="font-size:1.2em; color:var(--theater-red);">${rank}</span></p>
+            <p style="font-size:0.8em; margin-top:20px;">2023年4月版 衣裳用語集全200問より選ばれし50の試練を突破せしことを証する</p>
+        </div>
+        <button class="opt-btn" style="width:250px; margin:auto;" onclick="location.reload()">再挑戦する</button>
+    `;
+}
+</script>
+</body>
+</html>

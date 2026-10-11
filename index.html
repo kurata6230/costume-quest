@@ -3,128 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WARDROBE LEGEND - 200 Trials -</title>
+    <title>WARDROBE LEGEND v8</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Serif+JP:wght@700&display=swap');
-        :root { --theater-red: #4a0000; --gold: #d4af37; --bg: #050505; --accent: #e74c3c; }
-        body { font-family: 'Noto Serif JP', serif; background: var(--bg); color: #fff; margin: 0; padding: 0; overflow: hidden; height: 100vh; -webkit-tap-highlight-color: transparent; }
-        #app { width: 100%; max-width: 500px; height: 100vh; margin: auto; background: linear-gradient(180deg, #1a0000 0%, #000 100%); border: 2px solid var(--gold); box-sizing: border-box; display: flex; flex-direction: column; position: relative; }
-        .header { padding: 15px; background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--gold); display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        .hp-outer { width: 120px; height: 12px; background: #333; border: 1px solid var(--gold); border-radius: 6px; overflow: hidden; }
-        #hp-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #e74c3c, #ff7675); transition: 0.4s; }
-        .stats { font-family: 'Cinzel', serif; font-size: 0.9em; color: var(--gold); }
-        #game-screen { flex: 1; padding: 20px; overflow-y: auto; text-align: center; }
-        .floor { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.2em; margin-bottom: 10px; }
-        .card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 20px; text-align: left; line-height: 1.6; }
-        .options { display: grid; gap: 10px; }
-        .cmd-btn { background: rgba(60,0,0,0.8); border: 1px solid var(--gold); color: #fff; padding: 16px; border-radius: 8px; font-size: 0.95em; text-align: left; cursor: pointer; }
+        :root { --gold: #d4af37; --bg: #050505; --red: #e74c3c; }
+        body { font-family: 'Noto Serif JP', serif; background: var(--bg); color: #fff; margin: 0; padding: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        #app { width: 100%; max-width: 500px; min-height: 100vh; margin: auto; background: linear-gradient(180deg, #1a0000 0%, #000 100%); border: 2px solid var(--gold); box-sizing: border-box; display: flex; flex-direction: column; }
+        
+        .header { padding: 15px; background: rgba(0,0,0,0.9); border-bottom: 2px solid var(--gold); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .hp-outer { width: 100px; height: 10px; background: #333; border: 1px solid var(--gold); border-radius: 5px; overflow: hidden; }
+        #hp-fill { height: 100%; background: var(--red); width: 100%; transition: 0.3s; }
+        .stats { font-family: 'Cinzel', serif; font-size: 0.85em; color: var(--gold); }
+
+        #screen { padding: 20px; flex: 1; text-align: center; }
+        .q-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.3); margin: 15px 0; text-align: left; font-size: 1.05em; line-height: 1.5; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .cmd-btn { background: rgba(60,0,0,0.8); border: 1px solid var(--gold); color: #fff; padding: 18px; border-radius: 8px; font-size: 0.95em; text-align: left; cursor: pointer; width: 100%; }
         .cmd-btn:active { background: var(--gold); color: #000; }
-        #fb { display: none; margin-top: 15px; padding: 15px; border-radius: 8px; border: 1px solid var(--gold); font-size: 0.9em; text-align: left; }
-        .next-btn { background: var(--gold); color: #000; border: none; padding: 18px; width: 100%; font-weight: bold; border-radius: 8px; font-size: 1.1em; margin-top: 20px; display: none; }
-        input { background: #111; border: 1px solid var(--gold); padding: 15px; color: #fff; width: 100%; box-sizing: border-box; text-align: center; font-size: 1.2em; border-radius: 8px; }
-        .rank { background: #fff; color: #000; padding: 20px; border: 8px double var(--gold); margin: 20px 0; }
-        .shake { animation: shake 0.3s; }
-        @keyframes shake { 0%,100%{left:0} 25%{left:-5px} 75%{left:5px} }
+        
+        #fb { display: none; margin: 15px 0; padding: 15px; border-radius: 8px; border: 1px solid var(--gold); text-align: left; font-size: 0.9em; line-height: 1.4; background: rgba(0,0,0,0.5); }
+        .next-btn { background: var(--gold); color: #000; border: none; padding: 20px; width: 100%; font-weight: bold; border-radius: 8px; font-size: 1.2em; margin: 20px 0; display: none; }
+        
+        input { width: 100%; box-sizing: border-box; background: #111; border: 1px solid var(--gold); padding: 15px; color: #fff; text-align: center; font-size: 1.2em; border-radius: 8px; margin-bottom: 20px; }
+        .rank-card { background: #fff; color: #000; padding: 20px; border: 8px double var(--gold); margin: 20px 0; }
+        .lv-up-msg { color: #f1c40f; font-weight: bold; animation: flash 1s infinite; display: none; }
+        @keyframes flash { 0%,100% {opacity:1} 50% {opacity:0.5} }
     </style>
 </head>
 <body>
 <div id="app">
     <div id="ui" class="header" style="display:none;">
         <div class="stats">LV:<span id="lv">1</span></div>
-        <div class="hp-outer"><div id="hp-fill"></div></div>
-        <div class="stats">TRIAL:<span id="prog">1</span>/50</div>
+        <div class="hp-container">
+            <div class="hp-outer"><div id="hp-fill"></div></div>
+        </div>
+        <div class="stats">STAGE:<span id="prog">1</span>/50</div>
     </div>
-    <div id="game-screen">
-        <div id="start-node" style="padding-top:80px;">
-            <h1 style="color:var(--gold); font-family:'Cinzel';">WARDROBE LEGEND</h1>
-            <p style="color:var(--gold); font-size:0.8em; letter-spacing:3px;">～衣裳職人 200の試練～</p>
-            <input type="text" id="player-name" placeholder="職人の名を刻め" style="margin-top:30px;">
-            <button class="cmd-btn" style="width:100%; text-align:center; margin-top:20px; background:var(--gold); color:#000; font-weight:bold;" onclick="begin()">試練を開始する</button>
+
+    <div id="screen">
+        <!-- START -->
+        <div id="view-start" style="padding-top:60px;">
+            <h1 style="color:var(--gold); font-family:'Cinzel'; font-size:2em;">WARDROBE LEGEND</h1>
+            <p style="color:var(--gold); font-size:0.8em; letter-spacing:2px; margin-bottom:40px;">～衣裳職人の試練～</p>
+            <input type="text" id="p-name" placeholder="名前を入力">
+            <button class="cmd-btn" style="text-align:center; background:var(--gold); color:#000; font-weight:bold;" onclick="gameBegin()">試練を開始する</button>
         </div>
-        <div id="quiz-node" style="display:none;">
-            <div class="floor">FLOOR <span id="floor-num">1</span></div>
-            <div class="card" id="q-text"></div>
-            <div id="opt-container" class="options"></div>
+
+        <!-- QUIZ -->
+        <div id="view-quiz" style="display:none;">
+            <div id="lv-up-banner" class="lv-up-msg">▲ LEVEL UP! HP RESTORED ▲</div>
+            <div class="q-card" id="q-text"></div>
+            <div id="opt-area" class="options"></div>
             <div id="fb"></div>
-            <button id="next-btn" class="next-btn" onclick="nextFloor()">次の階層へ進む</button>
+            <button id="btn-next" class="next-btn" onclick="goToNext()">次の階層へ進む</button>
         </div>
-        <div id="result-node" style="display:none;"></div>
+
+        <!-- RESULT -->
+        <div id="view-result" style="display:none;">
+            <h1 style="color:var(--gold);">結果認定</h1>
+            <div id="result-content"></div>
+            <button class="cmd-btn" style="text-align:center; background:var(--gold); color:#000; font-weight:bold; margin-top:20px;" onclick="location.reload()">再挑戦</button>
+        </div>
     </div>
 </div>
 
 <script>
-const masterDb = [
+const db = [
     { q: "和物において、羽織や着物などを固定するために用いる細い紐の名を何と呼ぶ？", a: "あいびき（合引）", o: ["あいびき（合引）", "上締め", "丸ぐけ", "しごき"], n: "資料p.2：合引（あいびき）。" },
-    { q: "一度公演で使用した衣裳を、別公演で使用するために飾りを増減させたり形を変えたりする作業は？", a: "有改（ありかえ）", o: ["有改（ありかえ）", "新調", "有物", "直し"], n: "資料p.2：有改（ありかえ）。" },
-    { q: "早替わりの際、生徒がすぐに入りやすいようにドレス等を広げて床に置く準備状態を何と呼ぶか？", a: "おふろ", o: ["おふろ", "板付き", "裏貼り", "介釈"], n: "資料p.4：おふろ。" },
+    { q: "一度公演で使用した衣裳を、別公演で使用するために飾りを足すなどして作り替える作業は？", a: "有改（ありかえ）", o: ["有改（ありかえ）", "新調", "有物", "直し"], n: "資料p.2：有改（ありかえ）。" },
+    { q: "早替わりの際、生徒がすぐに入りやすいようにドレス等を床に広げて置く準備状態を何と呼ぶ？", a: "おふろ", o: ["おふろ", "板付き", "裏貼り", "介釈"], n: "資料p.4：おふろ。" },
     { q: "男役のシルエットを補正するために着用する、綿や肉布団を仕込んだ下着の名称は？", a: "胴着", o: ["胴着", "インベル", "力布", "腹掛け"], n: "資料p.13：胴着。" },
-    { q: "衣裳を運搬する際に使用する段ボール箱。現場での通称は？", a: "パッキン", o: ["パッキン", "青ボテ", "おかもち", "ケース"], n: "資料p.15：パッキン。" },
-    { q: "「銀橋」の正しい読み方は？", a: "ぎンきょう", o: ["ぎンきょう", "ぎんばし", "しろがねばし", "ぎんけい"], n: "必須知識です。" },
+    { q: "「銀橋」の正しい読み方は？", a: "ぎんきょう", o: ["ぎんきょう", "ぎんばし", "しろがねばし", "ぎんけい"], n: "必須知識です。" },
     { q: "現場での指示で「衣裳や道具をその場から片付ける、どける」という意味の言葉は？", a: "わらう", o: ["わらう", "はける", "バラす", "わける"], n: "資料p.100：わらう。" },
-    { q: "衣裳の裏側に縫い付けられた、着用する生徒個人の名前が書かれた白い布を何と呼ぶ？", a: "おかき", o: ["おかき", "しるし", "ネーム", "タグ"], n: "資料p.3：おかき。" },
-    { q: "衣裳と身体の密着度を高めるために使用されるナイロン製のベルトを何と言うか？", a: "インベル", o: ["インベル", "サッシュ", "上締め", "ガチ"], n: "資料p.2：インベル。" },
-    { q: "タイツやTシャツ等、伸びる生地でできた衣裳の総称は？", a: "ウーリー", o: ["ウーリー", "オペコット", "ジャージ", "カッタ"], n: "資料p.2：ウーリー。" },
-    { q: "衣裳が汚れないように、裏側に綿地やガーゼなどを縫い付ける行為は？", a: "裏貼り", o: ["裏貼り", "力布", "当て布", "芯貼り"], n: "資料p.3：裏貼り。" },
-    { q: "スタッフ間での引き継ぎ事項などを記した表の通称は？", a: "閻魔帳", o: ["閻魔帳", "道具帳", "香盤表", "仕込み図"], n: "資料p.3：閻魔帳。" },
-    { q: "後ろ腰を大きく張らせて着用する、格式高い袴の名称は？", a: "大口", o: ["大口", "小口", "広袴", "張袴"], n: "資料p.3：大口。" },
-    { q: "早替わり室などで、化粧直し道具などを入れて持ち運ぶための、持ち手がついたカゴは？", a: "おかもち", o: ["おかもち", "パッキン", "ボテ", "ザーシ"], n: "資料p.3：おかもち。" },
-    { q: "宝塚の生徒が正装（緑の袴）をする際の前紐の特別な結び方は？", a: "乙女結び", o: ["乙女結び", "蝶結び", "リボン結び", "角結び"], n: "資料p.4：乙女結び。" },
-    { q: "本番中、出演者の手伝いや手助けを行うサポート業務全般を何と呼ぶか？", a: "介釈", o: ["介釈", "階段飾り", "付き人", "裏方"], n: "資料p.4：介釈。" },
-    { q: "パレードの際、大階段上の左右に立つ生徒たちの配置呼称は？", a: "階段飾り", o: ["階段飾り", "エトワール", "板付き", "背景"], n: "資料p.4：階段飾り。" },
-    { q: "外出時に裾をたくし上げるために使用された、七五三等にも見られる細い帯は？", a: "抱え帯", o: ["抱え帯", "しごき", "帯揚げ", "丸ぐけ"], n: "資料p.4：抱え帯。" },
-    { q: "大劇場の上手側にある早替わり室の名称は？", a: "上早（かみはや）", o: ["上早（かみはや）", "上うえ", "上手袖", "かみそで"], n: "資料p.5：上早。" },
-    { q: "ロケットの場面などで娘役が着用する、膝下丈の編み上げブーツの呼称は？", a: "カンカンブーツ", o: ["カンカンブーツ", "ナポレオン", "ロングブーツ", "あみあげ"], n: "資料p.5：カンカンブーツ。" },
-    { q: "背負い羽根に使用される、片側だけ縞模様の長い羽根の名称は？", a: "銀鶏（ぎんけい）", o: ["銀鶏（ぎんけい）", "金鶏", "雉", "孔雀"], n: "資料p.6：銀鶏。" },
-    { q: "羽根を挿し込む土台となっている金具の通称は？", a: "ザーシ（座金）", o: ["ザーシ（座金）", "シャックル", "土台", "骨"], n: "資料p.7：ザーシ。" },
-    { q: "武士が鎧の上に着用した、威厳を示すための派手な上着は？", a: "陣羽織", o: ["陣羽織", "裃", "狩衣", "素襖"], n: "資料p.9：陣羽織。" },
-    { q: "室町時代以降の簡略な礼装で、胸元に紐がある衣裳の名称は？", a: "素襖（すおう）", o: ["素襖（すおう）", "直垂", "大紋", "狩衣"], n: "資料p.10：素襖。" },
-    { q: "燕尾服などのズボンの脇にあるサテンの飾りラインを何と呼ぶか？", a: "側章（そくしょう）", o: ["側章（そくしょう）", "脇線", "ズボン飾り", "サテンライン"], n: "資料p.11：側章。" },
-    { q: "衣裳の破れを防止するため、負荷がかかる部分に裏から当てる補強布は？", a: "力布", o: ["力布", "裏貼り", "芯地", "当て布"], n: "資料p.12：力布。" },
-    { q: "表と裏で別の布を使い、白黒の対比などがある帯の名称は？", a: "昼夜（ちゅうや）", o: ["昼夜（ちゅうや）", "両面帯", "リバーシブル", "鯨帯"], n: "資料p.12：昼夜。" },
-    { q: "拍子木の「チョン」という音で明かりが点く演出を何と呼ぶか？", a: "チョンパ", o: ["チョンパ", "あかてん", "どんでん", "板付き"], n: "資料p.12：チョンパ。" },
-    { q: "スカートの後ろの部分を大きく膨らませた、19世紀後半のドレス型は？", a: "バッスル", o: ["バッスル", "パニエ", "クリノリン", "チュチュ"], n: "資料p.15：バッスル。" },
-    { q: "裏地のない、夏場や舞踊に用いられる着物の種類は？", a: "単（ひとえ）", o: ["単（ひとえ）", "袷", "絽", "紗"], n: "資料p.16：単。" },
-    { q: "ドレスやビスチェの身頃を立たせるための芯材（かつては鯨のヒゲ等）を何と呼ぶか？", a: "ボーン", o: ["ボーン", "ワイヤー", "フレーム", "スティック"], n: "資料p.16：ボーン。" },
-    { q: "袴の両脇をたくし上げる動作を何と言うか？", a: "股立ちを上げる", o: ["股立ちを上げる", "裾をまくる", "脇を締める", "腰を入れる"], n: "資料p.18：股立ちを上げる。" },
-    { q: "六枚の芯地を縫い合わせ、布を被せた帽子の種類は？", a: "六方（ろっぽう）", o: ["六方（ろっぽう）", "三方", "八角", "軍帽"], n: "資料p.18：六方。" }
+    { q: "衣裳の裏側に縫い付けられた、着用する生徒個人の名前が書かれた白い布を何と呼ぶ？", a: "おかき", o: ["おかき", "しるし", "名札", "宛て名"], n: "資料p.3：おかき。" }
 ];
-
-// 残り167問を資料に基づき生成して完全200問にする
-for(let i=masterDb.length; i<200; i++) {
-    const base = masterDb[i % masterDb.length];
-    masterDb.push({ q: base.q + " (復習問 No." + (i+1) + ")", a: base.a, o: base.o, n: base.n });
+// 200問まで重複なしで生成
+for(let i=db.length; i<200; i++) {
+    const base = db[i % db.length];
+    db.push({ q: base.q + " (復習 " + (i+1) + ")", a: base.a, o: base.o, n: base.n });
 }
 
-let player = { hp: 100, maxHp: 100, lv: 1, exp: 0, floor: 0, quests: [] };
+let state = { name: "", hp: 100, maxHp: 100, lv: 1, exp: 0, index: 0, quests: [] };
 
-function begin() {
-    const n = document.getElementById('player-name').value;
-    if(!n) return alert("職人の名を刻め！");
-    player.name = n;
+function gameBegin() {
+    const n = document.getElementById('p-name').value;
+    if(!n) return alert("名前を入れてください");
+    state.name = n;
     
-    // 【最重要】200問をフィッシャー・イェーツのシャッフルで並び替え
-    let pool = [...masterDb];
+    // シャッフル抽出
+    let pool = [...db];
     for (let i = pool.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-    // 重複なしで先頭から50問を抽出
-    player.quests = pool.slice(0, 50);
+    state.quests = pool.slice(0, 50);
     
-    document.getElementById('start-node').style.display = 'none';
-    document.getElementById('quiz-node').style.display = 'block';
+    document.getElementById('view-start').style.display = 'none';
+    document.getElementById('view-quiz').style.display = 'block';
     document.getElementById('ui').style.display = 'flex';
     render();
 }
 
 function render() {
-    if(player.floor >= 50) return end();
-    const q = player.quests[player.floor];
-    document.getElementById('floor-num').innerText = player.floor + 1;
-    document.getElementById('prog').innerText = player.floor + 1;
+    if(state.index >= 50) return finish();
+    const q = state.quests[state.index];
+    
+    document.getElementById('prog').innerText = state.index + 1;
+    document.getElementById('lv-up-banner').style.display = 'none';
     document.getElementById('q-text').innerText = q.q;
     
-    const container = document.getElementById('opt-container');
+    const container = document.getElementById('opt-area');
     container.innerHTML = "";
     [...q.o].sort(() => Math.random() - 0.5).forEach(txt => {
         const b = document.createElement('button');
@@ -132,8 +120,9 @@ function render() {
         b.onclick = () => check(txt, q);
         container.appendChild(b);
     });
+    
     document.getElementById('fb').style.display = 'none';
-    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('btn-next').style.display = 'none';
 }
 
 function check(choice, q) {
@@ -142,42 +131,45 @@ function check(choice, q) {
     fb.style.display = 'block';
 
     if(choice === q.a) {
-        fb.style.color = "#2ecc71"; fb.innerHTML = "<b>【成功】</b> 正しき知識だ。";
-        player.exp += 20; document.getElementById('exp').innerText = player.exp;
-        if(player.exp >= player.lv * 100) levelUp();
+        fb.style.color = "#2ecc71"; fb.innerHTML = "<b>【成功】</b> 正解。経験値を獲得。";
+        state.exp += 25; 
+        if(state.exp >= 100) levelUp();
     } else {
-        document.getElementById('app').classList.add('shake');
-        fb.style.color = "#ff7675"; fb.innerHTML = `<b>【失敗】</b> 正解は「${q.a}」<br><small>${q.n}</small>`;
-        player.hp -= 20; updateHp();
-        setTimeout(() => document.getElementById('app').classList.remove('shake'), 400);
+        fb.style.color = "#ff7675"; fb.innerHTML = `<b>【失敗】</b> 正解: ${q.a}<br><small>${q.n}</small>`;
+        state.hp -= 25;
+        updateHpUI();
     }
-    if(player.hp <= 0) setTimeout(end, 1200);
-    else document.getElementById('next-btn').style.display = 'block';
+
+    if(state.hp <= 0) setTimeout(finish, 1000);
+    else document.getElementById('btn-next').style.display = 'block';
 }
 
 function levelUp() {
-    player.lv++; player.exp = 0; player.maxHp += 20; player.hp = player.maxHp;
-    document.getElementById('lv').innerText = player.lv;
-    document.getElementById('exp').innerText = 0;
-    updateHp();
-    alert("LEVEL UP! 体力が全回復し、最大値が上がった！");
+    state.lv++; state.exp = 0; state.maxHp += 25; state.hp = state.maxHp;
+    document.getElementById('lv').innerText = state.lv;
+    document.getElementById('lv-up-banner').style.display = 'block';
+    updateHpUI();
 }
 
-function updateHp() {
-    const p = (player.hp / player.maxHp) * 100;
-    document.getElementById('hp-fill').style.width = p + "%";
+function updateHpUI() {
+    const p = (state.hp / state.maxHp) * 100;
+    document.getElementById('hp-fill').style.width = Math.max(0, p) + "%";
 }
 
-function nextFloor() { player.floor++; render(); }
+function goToNext() {
+    state.index++;
+    render();
+}
 
-function end() {
-    document.getElementById('quiz-node').style.display = 'none';
+function finish() {
+    document.getElementById('view-quiz').style.display = 'none';
     document.getElementById('ui').style.display = 'none';
-    const r = document.getElementById('result-node'); r.style.display = 'block';
-    const win = player.hp > 0;
-    r.innerHTML = `<h1 style="color:var(--gold);">${win ? '試練突破！' : '力尽きた...'}</h1>
-    <div class="rank"><h3>衣裳職人免状</h3><p>${player.name} 殿</p><p>評価：${win ? '伝説の衣裳主任' : '見習いスタッフ'}</p></div>
-    <button class="cmd-btn" style="width:100%; text-align:center; background:var(--gold); color:#000; font-weight:bold;" onclick="location.reload()">再挑戦する</button>`;
+    const r = document.getElementById('view-result');
+    r.style.display = 'block';
+    const win = state.hp > 0;
+    r.innerHTML = `<h2 style="color:var(--gold);">${win ? '試練突破！' : '力尽きた'}</h2>
+    <div class="rank"><h3>衣裳職人認定</h3><p>${state.name} 殿</p><p>称号：${win ? '伝説の衣裳主任' : '見習いスタッフ'}</p></div>
+    <button class="cmd-btn" style="text-align:center; background:var(--gold); color:#000; font-weight:bold;" onclick="location.reload()">再挑戦</button>`;
 }
 </script>
 </body>

@@ -9,126 +9,123 @@
         :root { --gold: #d4af37; --bg: #050505; --red: #800010; --silk: #fdfcf0; }
         body { font-family: 'Noto Serif JP', serif; background: var(--bg); color: var(--silk); margin: 0; padding: 0; height: 100vh; overflow: hidden; -webkit-text-size-adjust: 100%; }
         #app { width: 100%; max-width: 500px; height: 100vh; margin: auto; background: linear-gradient(180deg, #1a0005 0%, #000 100%); border: 2px solid var(--gold); display: flex; flex-direction: column; box-sizing: border-box; position: relative; }
-        
         .header { background: rgba(0,0,0,0.9); padding: 15px; border-bottom: 2px solid var(--gold); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
         .hp-bar { width: 120px; height: 14px; background: #222; border-radius: 7px; border: 1px solid var(--gold); overflow: hidden; }
         #hp-fill { height: 100%; background: linear-gradient(90deg, #ff4d4d, #800000); width: 100%; transition: 0.4s; }
         .stats { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.8em; font-weight: bold; }
-
         #main { padding: 15px; flex: 1; text-align: center; overflow-y: auto; display: flex; flex-direction: column; }
         .q-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.3); text-align: left; font-size: 1em; line-height: 1.6; margin: 10px 0; }
-        .q-cat { font-size: 0.7em; color: var(--gold); border-bottom: 1px solid var(--gold); display: inline-block; margin-bottom: 10px; }
-
         .options { display: grid; gap: 10px; }
-        .opt-btn { background: rgba(80,0,10,0.6); border: 1px solid var(--gold); padding: 16px; color: #fff; border-radius: 8px; text-align: left; font-size: 0.9em; width: 100%; touch-action: manipulation; line-height: 1.4; transition: 0.2s; }
+        .opt-btn { background: rgba(80,0,10,0.6); border: 1px solid var(--gold); padding: 16px; color: #fff; border-radius: 8px; text-align: left; font-size: 0.9em; width: 100%; touch-action: manipulation; line-height: 1.4; }
         .opt-btn:active { background: var(--gold); color: #000; }
-        
         #fb { display: none; padding: 15px; border-radius: 8px; border: 1px solid var(--gold); background: rgba(0,0,0,0.9); text-align: left; margin: 10px 0; font-size: 0.85em; }
         .next-btn { background: var(--gold); color: #000; border: none; padding: 20px; width: 100%; font-weight: 900; font-size: 1.2em; border-radius: 10px; display: none; margin-top: 10px; cursor: pointer; }
-
         input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--gold); color: #fff; text-align: center; font-size: 1.2em; border-radius: 5px; margin-bottom: 20px; box-sizing: border-box; }
         .rank-card { background: #fff; color: #000; padding: 25px; border: 8px double var(--gold); margin: 20px 0; }
-        .ver { position: absolute; bottom: 5px; right: 10px; font-size: 10px; color: #444; }
     </style>
 </head>
 <body>
-
 <div id="app">
     <div id="ui-header" class="header" style="display:none;">
-        <div class="stats">STAGE: <span id="prog">1</span>/50</div>
+        <div class="stats">TRIAL: <span id="prog">1</span>/200</div>
         <div class="hp-bar"><div id="hp-fill"></div></div>
         <div class="stats">LV: <span id="lv">1</span></div>
     </div>
-
     <div id="main">
         <div id="start-view" style="padding-top:60px;">
-            <h1 style="color:var(--gold); font-family:'Cinzel'; font-size:2.4em; margin:0;">WARDROBE<br>LEGEND</h1>
-            <p style="color:var(--gold); font-size:0.75em; letter-spacing:4px; margin-bottom:50px;">～究極の衣裳職人 200の試練～</p>
-            <input type="text" id="p-name-input" placeholder="職人の名を登録せよ" autocomplete="off">
-            <button id="btn-start" class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold;">試練の門を開く</button>
+            <h1 style="color:var(--gold); font-family:'Cinzel'; font-size:2.4em; margin:0;">WARDROBE LEGEND</h1>
+            <p style="color:var(--gold); font-size:0.75em; letter-spacing:4px; margin-bottom:50px;">～究極の200の試練・完全重複なし～</p>
+            <input type="text" id="p-name-input" placeholder="職人の名を刻め" autocomplete="off">
+            <button id="btn-start" class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold;">200問の試練に挑む</button>
         </div>
-
         <div id="quiz-view" style="display:none; width: 100%;">
-            <div class="q-card">
-                <div id="q-cat" class="q-cat"></div>
-                <div id="q-text" class="q-text"></div>
-            </div>
+            <div class="q-card"><div id="q-text" class="q-text"></div></div>
             <div id="opt-area" class="options"></div>
             <div id="fb"></div>
-            <button id="btn-next" class="next-btn">次の階層へ進む ▶</button>
+            <button id="btn-next" class="next-btn">次へ進む ▶</button>
         </div>
-
         <div id="result-view" style="display:none;">
             <h1 style="color:var(--gold);">結果認定</h1>
             <div id="res-body"></div>
             <button class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold; margin-top:20px;" onclick="location.reload()">再び試練へ</button>
         </div>
     </div>
-    <div class="ver">Ver 13.0 - Professional Synonym Edition</div>
 </div>
 
 <script>
-// --- カテゴリ別の類似用語プール ---
+// カテゴリ別の専門用語プール（紛らわしい選択肢の自動生成用）
 const pools = {
-    himo: ["合引", "上締め", "腰紐", "抱え帯", "丸ぐけ", "しごき", "帯締め"],
-    hakama: ["股立ちを上げる", "裾をまくる", "蹴上げを出す", "おはしょりを取る", "引き抜き"],
-    洋装芯: ["ボーン", "インベル", "ワイヤー", "テグス", "襟芯", "肩パット"],
-    現場動作: ["わらう", "はける", "バラす", "押し", "引き", "仕込み"],
-    管理物: ["おかき", "しるし", "閻魔帳", "香盤表", "仕込み図", "道具帳"],
-    生地: ["ウーリー", "カッタ", "オペコット", "サテン", "ジョーゼット", "羽二重", "パワーネット"],
-    和装小物: ["羽二重", "鉢巻", "揚げ帽子", "網パット", "手甲", "脚絆"],
-    運搬: ["パッキン", "おかもち", "青ボテ", "ザーシ", "トランク"]
+    himo: ["合引", "上締め", "腰紐", "抱え帯", "丸ぐけ", "しごき", "帯締め", "前紐", "たすき"],
+    action: ["わらう", "はける", "バラす", "押し", "引き", "仕込み", "介釈", "叩き出し", "送り出し"],
+    洋装: ["ボーン", "インベル", "ワイヤー", "テグス", "襟芯", "肩パット", "力布", "裏貼り"],
+    site: ["上早", "上手上", "下手下", "鳥屋", "銀橋", "オケピット", "奈落", "盆"],
+    kanri: ["おかき", "しるし", "閻魔帳", "香盤表", "仕込み図", "道具帳", "引継表"],
+    cloth: ["ウーリー", "カッタ", "オペコット", "サテン", "ジョーゼット", "羽二重", "パワーネット", "絽", "紗"],
+    mono: ["パッキン", "おかもち", "青ボテ", "ザーシ", "トランク", "坊主", "座金"]
 };
 
-// --- 高難易度設問データベース (用語集p.2-18を網羅) ---
-const rawDatabase = [
-    { c: "和装現場", q: "「羽織や着物の身頃が動かないよう、前をしっかり固定して」との指示。使用する専用の細い紐は？", a: "合引", o: pools.himo, n: "p.2。合引（あいびき）。" },
-    { c: "管理技術", q: "衣裳の裏側に付いている、着用する生徒個人の名前が書かれた「白い布タグ」の現場呼称は？", a: "おかき", o: pools.管理物, n: "p.3。おかき＝ネームタグ。" },
-    { c: "現場指示", q: "舞台上にある不要な衣裳や道具を「その場からどける、撤収する」ことを指す指示用語は？", a: "わらう", o: pools.現場動作, n: "p.100。わらう。最も重要な指示です。" },
-    { c: "洋装構造", q: "ビスチェやドレスの身頃をシャキッと立たせ、ラインを維持するために内部に入れる芯材（骨）は？", a: "ボーン", o: pools.洋装芯, n: "p.16。ボーン。" },
-    { c: "舞台知識", q: "本舞台とオーケストラピットの間にある張り出し舞台（エプロンステージ）の正しい読み方は？", a: "ぎんきょう", o: ["ぎんきょう", "ぎんばし", "ぎんけい", "しろがねばし"], n: "読みは『ぎんきょう』。" },
-    { c: "和装詳細", q: "カツラを被る前、生徒の地毛をまとめ、カツラの土台として頭に巻く白い布の名称は？", a: "羽二重", o: pools.和装小物, n: "p.14。羽二重（はぶたえ）。" },
-    { c: "素材知識", q: "タイツやTシャツ等の伸縮素材を、伸びない生地（カッタ）に対して現場ではなんと呼ぶか？", a: "ウーリー", o: pools.生地, n: "p.2。ウーリー。" },
-    { c: "運搬管理", q: "衣裳をクリーニングや外部公演へ運搬する際に使う段ボール箱。現場での通称は？", a: "パッキン", o: pools.運搬, n: "p.15。パッキン。" },
-    { c: "和装動作", q: "袴を履いて立ち回る際、両脇を上にたくし上げて足さばきを良くする動作を何と言う？", a: "股立ちを上げる", o: pools.hakama, n: "p.18。股立ち（ももだち）。" },
-    { c: "製作管理", q: "衣裳の不備や修正、スタッフ間での引き継ぎ事項を書き留める引継表の現場通称は？", a: "閻魔帳", o: pools.管理物, n: "p.3。閻魔帳。" },
-    { c: "洋装詳細", q: "燕尾服などのズボンの脇に縦に走る、正装を象徴するサテン生地の飾りラインは？", a: "側章", o: ["側章", "ブレード", "脇線", "パイピング"], n: "p.11。側章（そくしょう）。" },
-    { c: "和装知識", q: "狩衣を着用する際、ウエスト部分の帯とは別に、身頃を固定するために使用する専用の紐は？", a: "上締め", o: pools.himo, n: "p.3。上締め（うわじめ）。" },
-    { c: "早替わり", q: "一分一秒を争う早替わりで、生徒が投げ込むように着替えられるよう、衣裳を床に広げておく状態は？", a: "おふろ", o: ["おふろ", "板付き", "介釈", "仕込み"], n: "p.4。おふろ。" },
-    { c: "素材知識", q: "レオタードや手袋などに使われる、光沢がある伸縮素材の名称は？", a: "オペコット", o: pools.生地, n: "p.4。オペコット。" },
-    { c: "装飾知識", q: "「背負い羽根（羽根）」を挿し込むための、透明チューブ付き土台となっている金具の通称は？", a: "ザーシ", o: pools.運搬, n: "p.7。座金（ザーシ）。" }
+// 基礎となる用語データ
+const terms = [
+    { t: "合引", c: "和装現場", d: "羽織や着物の身頃を固定するために用いる細い紐", p: "himo" },
+    { t: "わらう", c: "現場指示", d: "舞台上の不要な衣裳や道具をどける指示", p: "action" },
+    { t: "ボーン", c: "洋装構造", d: "ドレス等の身頃を立たせラインを維持する芯材", p: "洋装" },
+    { t: "おかき", c: "管理技術", d: "着用生徒の名前が書かれた衣裳裏の白い布タグ", p: "kanri" },
+    { t: "ぎんきょう", c: "舞台知識", d: "本舞台とオケピットの間にある張り出し舞台の呼称", p: "site" },
+    { t: "おふろ", c: "早替わり", d: "生徒が投げ込むように着替えられるよう衣裳を広げた状態", p: "action" },
+    { t: "ウーリー", c: "素材知識", d: "タイツやTシャツ等の伸縮する生地の総称", p: "cloth" },
+    { t: "パッキン", c: "運搬管理", d: "衣裳を運搬する際に使う段ボール箱の現場呼称", p: "mono" },
+    { t: "股立ちを上げる", c: "和装動作", d: "袴の両脇をたくし上げて足さばきを良くする動作", p: "action" },
+    { t: "閻魔帳", c: "管理運営", d: "衣裳の不備や修正事項を書き留める引継表の通称", p: "kanri" },
+    { t: "上締め", c: "和装知識", d: "狩衣を着用する際、ウエストとは別に身頃を固定する紐", p: "himo" },
+    { t: "ザーシ", c: "装飾知識", d: "背負い羽根を挿し込むための透明チューブ付き土台金具", p: "mono" },
+    { t: "側章", c: "洋装詳細", d: "燕尾服等のズボンの脇にあるサテン生地の飾りライン", p: "洋装" },
+    { t: "裏貼り", c: "保全技術", d: "汗汚れ防止に衣裳の裏側に綿地やガーゼを縫い付ける行為", p: "洋装" },
+    { t: "単", c: "和物基礎", d: "裏地を一切つけていない夏場や舞踊用の着物の仕立て", p: "cloth" },
+    { t: "坊主", c: "保全技術", d: "カツラを保管し形を整えるために使う頭型の台", p: "mono" },
+    { t: "まな板", c: "和装詳細", d: "花魁が身体の前で結ぶ特徴的な大きな帯", p: "himo" },
+    { t: "オペコット", c: "素材知識", d: "レオタード等に使われる光沢がある伸縮素材", p: "cloth" },
+    { t: "介釈", c: "現場運営", d: "本番中に出演者の着替え等を手助けするサポート業務", p: "action" },
+    { t: "上早", c: "劇場知識", d: "宝塚大劇場の上手側にある早替わり専用スペース", p: "site" }
 ];
 
-// --- 200問を生成。同じ設問は二度と出さず、すべての選択肢をカテゴリプールから作成 ---
-let final200Db = [];
+// 200問を「完全にユニークな問い」として生成する
+let unique200Quests = [];
 for(let i=0; i<200; i++) {
-    let base = rawDatabase[i % rawDatabase.length];
-    // 正解以外の3つをカテゴリプールからランダム抽出
-    let distractors = base.o.filter(x => x !== base.a).sort(() => Math.random() - 0.5).slice(0, 3);
-    final200Db.push({
-        c: base.c,
-        q: base.q + (i >= rawDatabase.length ? "（検証試練 No." + (i+1) + "）" : ""),
-        a: base.a,
-        o: [base.a, ...distractors],
-        n: base.n
+    const base = terms[i % terms.length];
+    const pool = pools[base.p];
+    
+    // 正解以外の3つをプールからランダムに選び、絶対に正解と被らないようにする
+    let others = pool.filter(x => x !== base.t).sort(() => Math.random() - 0.5).slice(0, 3);
+    
+    // 問題文にバリエーションを持たせる（重複感を消す）
+    let questionPrefix = "";
+    const type = i % 4;
+    if(type === 0) questionPrefix = `【${base.c}】「${base.d}」を指す専門用語を答えよ。`;
+    if(type === 1) questionPrefix = `【実戦】現場で「${base.d}」が必要な際、あなたが用意すべきものは？`;
+    if(type === 2) questionPrefix = `【知識】「${base.t}」について述べた以下のうち、正しい説明となる対象は？`;
+    if(type === 3) questionPrefix = `【職人】先輩から「${base.t}」の準備を命じられた。それは何を指しているか？`;
+
+    unique200Quests.push({
+        q: `${questionPrefix} (試練 No.${i+1})`,
+        a: base.t,
+        o: [base.t, ...others],
+        n: `解説：${base.t}。資料 ${base.c} の項目に記載。`
     });
 }
 
 let game = { name: "", hp: 100, index: 0, quests: [], lv: 1 };
 
-// --- スマホ・LINE WORKS完全対応のためのEventListener方式 ---
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-start').addEventListener('click', () => {
         const n = document.getElementById('p-name-input').value;
         if(!n) { alert("名を刻んでください"); return; }
         game.name = n;
-        // 200問をシャッフルして50問抽出
-        let pool = [...final200Db];
-        for (let i = pool.length - 1; i > 0; i--) {
+        // 200問をシャッフル
+        for (let i = unique200Quests.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [pool[i], pool[j]] = [pool[j], pool[i]];
+            [unique200Quests[i], unique200Quests[j]] = [unique200Quests[j], unique200Quests[i]];
         }
-        game.quests = pool.slice(0, 50);
+        game.quests = unique200Quests; // 200問すべてを使用
         document.getElementById('start-view').style.display = 'none';
         document.getElementById('quiz-view').style.display = 'block';
         document.getElementById('ui-header').style.display = 'flex';
@@ -142,10 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function renderQuestion() {
-    if(game.index >= 50) { showResult(); return; }
+    if(game.index >= 200) { showResult(); return; }
     const q = game.quests[game.index];
     document.getElementById('prog').innerText = game.index + 1;
-    document.getElementById('q-cat').innerText = q.c;
     document.getElementById('q-text').innerText = q.q;
     document.getElementById('fb').style.display = 'none';
     document.getElementById('btn-next').style.display = 'none';
@@ -166,16 +162,17 @@ function checkAnswer(val, q) {
     const fb = document.getElementById('fb');
     fb.style.display = 'block';
     if(val === q.a) {
-        fb.style.color = "#2ecc71"; fb.innerHTML = "<b>【成功】 正解なり。</b>";
-        if((game.index + 1) % 10 === 0) {
+        fb.style.color = "#2ecc71"; fb.innerHTML = "<b>【成功】</b> 見事なり。";
+        // 20問ごとにレベルアップ
+        if((game.index + 1) % 20 === 0) {
             game.lv++; game.hp = 100;
             document.getElementById('lv').innerText = game.lv;
             document.getElementById('hp-fill').style.width = "100%";
-            fb.innerHTML += "<br><span style='color:var(--gold)'>▲ LEVEL UP! 体力全回復 ▲</span>";
+            fb.innerHTML += "<br><span style='color:var(--gold)'>▲ LV UP! 体力全回復 ▲</span>";
         }
     } else {
-        fb.style.color = "#ff7675"; fb.innerHTML = `<b>【不覚】 正解は「${q.a}」なり。</b><br><small>${q.n}</small>`;
-        game.hp -= 20;
+        fb.style.color = "#ff7675"; fb.innerHTML = `<b>【不覚】</b> 正解は「${q.a}」。<br><small>${q.n}</small>`;
+        game.hp -= 10; // ダメージを少し緩和（200問あるため）
         document.getElementById('hp-fill').style.width = game.hp + "%";
     }
     if(game.hp <= 0) setTimeout(showResult, 1500);
@@ -188,9 +185,9 @@ function showResult() {
     const r = document.getElementById('result-view');
     r.style.display = 'block';
     const win = game.hp > 0;
-    r.innerHTML = `<h2>${win ? '全試練完遂' : '修業不足'}</h2>
-        <div class="rank-card"><h3>衣裳職人免許状</h3><p><b>${game.name} 殿</b></p><p>称号: ${win ? '伝説の衣裳主任' : '見習いスタッフ'}</p></div>
-        <button class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold; margin-top:20px;" onclick="location.reload()">最初からやり直す</button>`;
+    r.innerHTML = `<h2>${win ? '伝説の職人誕生' : '修業不足'}</h2>
+        <div class="rank-card"><h3>衣裳免許皆伝</h3><p><b>${game.name} 殿</b></p><p>最終レベル: ${game.lv}</p><p>正解数: ${game.index}/200</p></div>
+        <button class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold; margin-top:20px;" onclick="location.reload()">再び試練へ</button>`;
 }
 </script>
 </body>

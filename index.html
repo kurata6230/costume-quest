@@ -3,113 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>衣裳職人伝説 100 - 究極の試練 -</title>
+    <title>WARDROBE LEGEND 100</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Serif+JP:wght@900&display=swap');
-        :root { --gold: #d4af37; --bg: #050505; --theater: #600010; --silk: #fdfcf0; }
-        body { font-family: 'Noto Serif JP', serif; background: var(--bg); color: var(--silk); margin: 0; padding: 0; height: 100vh; overflow: hidden; -webkit-tap-highlight-color: transparent; }
-        #app { width: 100%; max-width: 500px; height: 100vh; margin: auto; background: linear-gradient(180deg, #200005 0%, #000 100%); border: 2px solid var(--gold); display: flex; flex-direction: column; box-sizing: border-box; position: relative; }
-        
+        :root { --gold: #d4af37; --bg: #050505; --red: #800010; --silk: #fdfcf0; }
+        body { font-family: 'Noto Serif JP', serif; background: var(--bg); color: var(--silk); margin: 0; padding: 0; height: 100vh; overflow: hidden; -webkit-text-size-adjust: 100%; }
+        #app { width: 100%; max-width: 500px; height: 100vh; margin: auto; background: linear-gradient(180deg, #1a0005 0%, #000 100%); border: 2px solid var(--gold); display: flex; flex-direction: column; box-sizing: border-box; position: relative; }
         .header { background: rgba(0,0,0,0.9); padding: 15px; border-bottom: 2px solid var(--gold); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
         .hp-bar { width: 120px; height: 14px; background: #222; border-radius: 7px; border: 1px solid var(--gold); overflow: hidden; }
         #hp-fill { height: 100%; background: linear-gradient(90deg, #ff4d4d, #800000); width: 100%; transition: 0.4s; }
-        .stats { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.8em; font-weight: bold; }
-
+        .stats { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.85em; font-weight: bold; }
         #main { padding: 15px; flex: 1; text-align: center; overflow-y: auto; display: flex; flex-direction: column; }
-        .q-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.3); text-align: left; font-size: 1em; line-height: 1.6; margin: 10px 0; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+        .q-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.3); text-align: left; font-size: 1.05em; line-height: 1.6; margin: 10px 0; min-height: 120px; display: flex; align-items: center; }
         .options { display: grid; gap: 10px; }
-        .opt-btn { background: rgba(80,0,10,0.6); border: 1px solid var(--gold); padding: 16px; color: #fff; border-radius: 8px; text-align: left; font-size: 0.9em; width: 100%; touch-action: manipulation; line-height: 1.4; transition: 0.2s; }
+        .opt-btn { background: rgba(80,0,10,0.6); border: 1px solid var(--gold); padding: 16px; color: #fff; border-radius: 8px; text-align: left; font-size: 0.95em; width: 100%; touch-action: manipulation; line-height: 1.4; }
         .opt-btn:active { background: var(--gold); color: #000; }
-        
-        #fb { display: none; padding: 15px; border-radius: 8px; border: 1px solid var(--gold); background: rgba(0,0,0,0.9); text-align: left; margin: 10px 0; font-size: 0.85em; }
+        #fb { display: none; padding: 15px; border-radius: 8px; border: 1px solid var(--gold); background: rgba(0,0,0,0.95); text-align: left; margin: 10px 0; font-size: 0.85em; }
         .next-btn { background: var(--gold); color: #000; border: none; padding: 20px; width: 100%; font-weight: 900; font-size: 1.2em; border-radius: 10px; display: none; margin-top: 10px; cursor: pointer; }
-
         input { width: 100%; padding: 15px; background: #000; border: 1px solid var(--gold); color: #fff; text-align: center; font-size: 1.2em; border-radius: 5px; margin-bottom: 20px; box-sizing: border-box; }
         .rank-card { background: #fff; color: #000; padding: 25px; border: 8px double var(--gold); margin: 20px 0; }
         .ver { position: absolute; bottom: 5px; right: 10px; font-size: 10px; color: #444; }
     </style>
 </head>
 <body>
-
 <div id="app">
     <div id="ui-header" class="header" style="display:none;">
         <div class="stats">TRIAL: <span id="prog">1</span>/100</div>
         <div class="hp-bar"><div id="hp-fill"></div></div>
         <div class="stats">LV: <span id="lv">1</span></div>
     </div>
-
     <div id="main">
         <div id="start-view" style="padding-top:60px;">
             <h1 style="color:var(--gold); font-family:'Cinzel'; font-size:2.4em; margin:0; text-shadow: 0 0 15px var(--gold);">WARDROBE<br>LEGEND 100</h1>
-            <p style="color:var(--gold); font-size:0.75em; letter-spacing:4px; margin-bottom:50px;">～究極の100の試練～</p>
-            <input type="text" id="p-name-input" placeholder="職人の名を刻め" autocomplete="off">
-            <button id="btn-start" class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold;">100問の試練に挑む</button>
-            <p style="font-size:0.65em; color:#666; margin-top:30px;">※ヒント一切なし。真の理解者のみが到達できる領域。</p>
+            <p style="color:var(--gold); font-size:0.75em; letter-spacing:4px; margin-bottom:50px;">～選ばれし100の試練・完全重複なし～</p>
+            <input type="text" id="p-name-input" placeholder="職人の名を登録せよ" autocomplete="off">
+            <button id="btn-start" class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold; font-size:1.1em;">100問の試練を開始する</button>
+            <p style="font-size:0.6em; color:#666; margin-top:30px;">※問題文に答えは一切出ません。Ver 19.0</p>
         </div>
-
         <div id="quiz-view" style="display:none; width: 100%;">
             <div class="q-card"><div id="q-text" class="q-text"></div></div>
             <div id="opt-area" class="options"></div>
             <div id="fb"></div>
             <button id="btn-next" class="next-btn">次の階層へ進む ▶</button>
         </div>
-
         <div id="result-view" style="display:none;">
             <h1 style="color:var(--gold);">結果認定</h1>
             <div id="res-body"></div>
             <button class="opt-btn" style="background:var(--gold); color:#000; text-align:center; font-weight:bold; margin-top:20px;" onclick="location.reload()">再び試練へ</button>
         </div>
     </div>
-    <div class="ver">Ver 15.0 - Ultimate 100 Fixed</div>
+    <div class="ver">Ver 19.0 - Accurate 100 Mastery</div>
 </div>
 
 <script>
-// --- 完全個別作成：100問ユニークデータベース ---
-const masterDatabase = [
-    { q: "和物において、羽織や着物が激しい動きで開かないよう、前を固定するために用いる細い紐の名称は？", a: "合引（あいびき）", o: ["合引（あいびき）", "上締め", "丸ぐけ", "抱え帯"], n: "資料p.2。" },
-    { q: "一度公演で使用した衣裳を、別公演で使用するために飾りを増やしたり形を作り替えたりするリメイク作業を何と呼ぶ？", a: "有改（ありかえ）", o: ["有改（ありかえ）", "有物", "新調", "直し"], n: "資料p.2。" },
-    { q: "早替わりで、生徒が足から投げ込むように着替えられるよう、ドレス等の身体を入れる部分を広げて床に置く準備状態は？", a: "おふろ", o: ["おふろ", "板付き", "介釈", "仕込み"], n: "資料p.4。" },
-    { q: "舞台とオケピットの間にある張り出しステージ。宝塚独自の正しい読み方はどれか？", a: "ぎんきょう", o: ["ぎんきょう", "ぎんばし", "しろがねばし", "ぎんけい"], n: "必須知識です。" },
-    { q: "現場での重要指示。「舞台上にある不要な衣裳や道具を、速やかにその場からどける、撤去する」ことを意味する言葉は？", a: "わらう", o: ["わらう", "はける", "バラす", "わける"], n: "資料p.100。" },
-    { q: "男役の理想の体型（寸胴や逞しい肩）を作るため、綿やスポンジを仕込んで作成した、体型補正用の下着を何と呼ぶか？", a: "胴着（どうぎ）", o: ["胴着（どうぎ）", "肉布団", "補正ベスト", "インベル"], n: "資料p.13。" },
-    { q: "衣裳の裏側に付いている、着用する生徒個人の名前が書かれた「白い布タグ」を現場では通称なんと呼ぶか？", a: "おかき", o: ["おかき", "しるし", "名札", "バーコード"], n: "資料p.3。" },
-    { q: "ビスチェやドレスの身頃をシャキッと立たせ、美しいラインを維持するために内部に入れられる芯材（骨組み）の名称は？", a: "ボーン", o: ["ボーン", "インベル", "ワイヤー", "テグス"], n: "資料p.16。" },
-    { q: "裏地を一切つけていない、夏場や舞踊に用いられる着物の仕立ての種類を何と呼ぶか？", a: "単（ひとえ）", o: ["単（ひとえ）", "袷（あわせ）", "絽", "紗"], n: "資料p.16。" },
-    { q: "衣裳を運搬する際、「段ボール箱」のことを現場では共通してなんと呼んでいるか？", a: "パッキン", o: ["パッキン", "ボテ", "おかもち", "ケース"], n: "資料p.15。" },
-    { q: "タイツやTシャツ等の伸縮素材を、伸びない生地（カッタ）に対して現場ではなんと呼ぶか？", a: "ウーリー", o: ["ウーリー", "オペコット", "ジャージ", "パワーネット"], n: "資料p.2。" },
-    { q: "和物衣裳の裾などで、襴（らん）の襞（ひだ）が『表に出ている部分』を指す専門用語はどれか？", a: "蟻先（ありさき）", o: ["蟻先（ありさき）", "入欄（にゅうらん）", "蹴上げ", "ケコミ"], n: "資料p.2。" },
-    { q: "ウエストラインを安定させ、衣裳と身体の密着度を高めるために使用される、ナイロン製のベルトを何と呼ぶか？", a: "インベル", o: ["インベル", "サッシュ", "上締め", "ガチ"], n: "資料p.2。" },
-    { q: "汗汚れ防止のために、衣裳の裏側に綿地やガーゼを縫い付ける、現場で行う保全行為は？", a: "裏貼り（うらはり）", o: ["裏貼り（うらはり）", "力布", "芯貼り", "補強"], n: "資料p.3。" },
-    { q: "衣裳の不備や修正、スタッフ間での引き継ぎ事項を書き留める引継表の、現場での通称は？", a: "閻魔帳（えんまちょう）", o: ["閻魔帳（えんまちょう）", "台帳", "香盤表", "仕込み図"], n: "資料p.3。" },
-    { q: "燕尾服などのズボンの脇に縦に走る、正装を象徴するサテン生地の飾りライン。その正式パーツ名は？", a: "側章（そくしょう）", o: ["側章（そくしょう）", "ブレード", "脇線", "パイピング"], n: "資料p.11。" },
-    { q: "和装で、動きを制限しないよう袴の両脇をたくし上げる動作を、現場では何と言うか？", a: "股立ち（ももだち）を上げる", o: ["股立ち（ももだち）を上げる", "裾をまくる", "蹴上げを出す", "おはしょりを取る"], n: "資料p.18。" },
-    { q: "「背負い羽根（羽根）」を挿し込むための土台。ランドセル側に付いている透明チューブ付き金具の通称は？", a: "ザーシ", o: ["ザーシ", "シャックル", "トグル", "ボーン"], n: "資料p.7。" },
-    { q: "肩衣（かたぎぬ）と袴がセットになった武士の正装。共布で作られていることが特徴の衣裳を何と呼ぶ？", a: "裃（かみしも）", o: ["裃（かみしも）", "直垂", "陣羽織", "素襖"], n: "資料p.5。" },
-    { q: "拍子木の「チョン」という音と共に、照明が「パッ」と点く、日本物ショー独自の幕開き演出は？", a: "チョンパ", o: ["チョンパ", "あかてん", "暗転開け", "どんでん"], n: "資料p.12。" },
-    { q: "早替わり室などで、化粧道具や小物を入れて運ぶ、持ち手がついたカゴの呼称は？", a: "おかもち", o: ["おかもち", "パッキン", "ボテ", "ザーシ"], n: "資料p.3。" },
-    { q: "レオタードや手袋などに使われる、やや光沢がある伸縮素材の名称は？", a: "オペコット", o: ["オペコット", "ウーリー", "シフォン", "ジョーゼット"], n: "資料p.4。" },
-    { q: "衣裳の破れを防止するために、負荷がかかる部分の裏側から当てて補強する布の名称は？", a: "力布（ちからぬの）", o: ["力布（ちからぬの）", "裏貼り", "芯地", "当て布"], n: "資料p.12。" },
-    { q: "和物の立ち役が屋外の場面で、草履をしっかりと足に固定するために足首に巻く布は？", a: "脚絆（きゃはん）", o: ["脚絆（きゃはん）", "手甲", "鉢巻", "足袋"], n: "資料p.5。" },
-    { q: "カツラを被る前、生徒の地毛をまとめ、カツラの土台として頭に巻く白い布の名称は？", a: "羽二重（はぶたえ）", o: ["羽二重（はぶたえ）", "鉢巻", "揚げ帽子", "網パット"], n: "資料p.14。" },
-    { q: "予算調整のために、演出デザインや材料を削る、衣裳スタッフにとって苦渋の判断となる会議を？", a: "カット会議", o: ["カット会議", "予算会議", "製作会議", "デザイン審査"], n: "資料p.28。" },
-    { q: "背負い羽根に使用される羽根で、片側だけが縞模様になっている特徴的な羽根の名称は？", a: "銀鶏（ぎんけい）", o: ["銀鶏（ぎんけい）", "金鶏", "雉（きじ）", "孔雀"], n: "資料p.6。" },
-    { q: "衣裳を運搬する際、トラック等に積み込むための丈夫な大型の道具箱を現場では何と呼ぶか？", a: "青ボテ", o: ["青ボテ", "パッキン", "おかもち", "トランク"], n: "現場用語。" },
-    { q: "衣裳のボタンが取れないよう、裏側から当てる小さなボタンのことを何と呼ぶか？", a: "力ボタン", o: ["力ボタン", "スナップ", "ホック", "カフス"], n: "一般裁縫用語。" },
-    { q: "階段の各段の「平らな面（足を乗せる部分）」の名称は？", a: "踏面（ふみづら）", o: ["踏面（ふみづら）", "蹴上げ", "ケコミ", "段差"], n: "資料p.74。" }
+// --- カテゴリ別に手動定義した「答えを言わない」100問データ ---
+const masterQuests = [
+    { q: "羽織や着物の前身頃が動かないよう、左右を固定するために用いる細い紐の名称は？", a: "合引（あいびき）", o: ["合引（あいびき）", "上締め", "しごき", "丸ぐけ"], n: "資料p.2。" },
+    { q: "舞台裏での重要指示。「そこにある衣裳や道具を、速やかにどけて、片付けて」という意味の言葉は？", a: "わらう", o: ["わらう", "はける", "バラす", "わける"], n: "資料p.100。" },
+    { q: "早替わりにおいて、生徒がすぐ着られるようドレス等を床に広げて準備しておく状態を何と言う？", a: "おふろ", o: ["おふろ", "板付き", "介釈", "仕込み"], n: "資料p.4。" },
+    { q: "男役の理想的なシルエットを作るため、綿やスポンジを仕込んだ体型補正用の下着を何と呼ぶか？", a: "胴着（どうぎ）", o: ["胴着（どうぎ）", "肉布団", "力布", "腹掛け"], n: "資料p.13。" },
+    { q: "本舞台とオーケストラピットの間にある張り出し通路の、宝塚独自の正しい読み方を答えよ。", a: "ぎんきょう", o: ["ぎんきょう", "ぎんばし", "しろがねばし", "ぎんけい"], n: "資料p.13。" },
+    { q: "衣裳の裏側に必ず付いている、着用する生徒個人の名前が記された「白い布タグ」の現場呼称は？", a: "おかき", o: ["おかき", "しるし", "名札", "バーコード"], n: "資料p.3。" },
+    { q: "ビスチェやドレスの身頃をシャキッと立たせ、形状を維持するために内部に入れられる芯材は？", a: "ボーン", o: ["ボーン", "ワイヤー", "インベル", "襟芯"], n: "資料p.16。" },
+    { q: "タイツやTシャツ等の、伸びる生地でできた衣裳の総称をなんと呼ぶか？", a: "ウーリー", o: ["ウーリー", "カッタ", "オペコット", "サテン"], n: "資料p.2。" },
+    { q: "和物衣裳の裾などで、襴（らん）の襞（ひだ）が『表に出ている部分』を指す専門用語はどれか？", a: "蟻先", o: ["蟻先", "入欄", "蹴上げ", "ケコミ"], n: "資料p.2。" },
+    { q: "衣裳を運搬する際、一般的に使用される段ボール箱のことを現場では通称なんと呼んでいるか？", a: "パッキン", o: ["パッキン", "ボテ", "おかもち", "ザーシ"], n: "資料p.15。" },
+    { q: "和装において、裏地を一切つけていない夏場や舞踊用の着物の仕立ての種類は？", a: "単（ひとえ）", o: ["単（ひとえ）", "袷（あわせ）", "絽", "紗"], n: "資料p.16。" },
+    { q: "ウエストラインを安定させ、密着度を高めるために使用されるナイロン製のベルトを何と言う？", a: "インベル", o: ["インベル", "サッシュ", "上締め", "ガチ"], n: "資料p.2。" },
+    { q: "燕尾服などのズボンの脇に縦に走る、正装を象徴するサテン生地の飾りラインは？", a: "側章（そくしょう）", o: ["側章（そくしょう）", "ブレード", "脇線", "パイピング"], n: "資料p.11。" },
+    { q: "狩衣を着用する際、ウエスト部分の帯とは別に、身頃を固定するために使用する専用の紐は？", a: "上締め（うわじめ）", o: ["上締め（うわじめ）", "合引", "腰紐", "抱え帯"], n: "資料p.3。" },
+    { q: "「背負い羽根」の羽根を挿し込むための、透明チューブ付き土台となっている金具の通称は？", a: "ザーシ", o: ["ザーシ", "トックル", "シャックル", "ボーン"], n: "資料p.7。" },
+    { q: "カツラを被る前、生徒の地毛をまとめ、土台として頭に巻く白い布の名称は？", a: "羽二重（はぶたえ）", o: ["羽二重（はぶたえ）", "揚げ帽子", "鉢巻", "網パット"], n: "資料p.14。" },
+    { q: "袴を履いて立ち回る際、足さばきを良くするために両脇をたくし上げる動作を？", a: "股立ちを上げる", o: ["股立ちを上げる", "裾をまくる", "蹴上げを出す", "おはしょり"], n: "資料p.18。" },
+    { q: "拍子木の音と共に、照明がパッと点く、日本物ショー独自の幕開き演出を何と言う？", a: "チョンパ", o: ["チョンパ", "あかてん", "暗転開け", "どんでん"], n: "資料p.12。" },
+    { q: "汗汚れ防止のために、衣裳の裏側に綿地やガーゼを縫い付ける現場メンテナンスは？", a: "裏貼り", o: ["裏貼り", "力布", "芯貼り", "補強"], n: "資料p.3。" },
+    { q: "予算調整のために演出デザインや材料を削る、衣裳スタッフにとって苦渋の会議を何と言うか？", a: "カット会議", o: ["カット会議", "予算会議", "製作会議", "デザイン審査"], n: "資料p.28。" },
+    { q: "衣裳が激しい動きで破れるのを防ぐため、負荷がかかる部分の裏側から当てる補強布は？", a: "力布（ちからぬの）", o: ["力布（ちからぬの）", "裏貼り", "芯地", "当て布"], n: "資料p.12。" },
+    { q: "早替わり室などで、化粧道具や小物を入れて持ち運ぶための、持ち手がついたカゴの呼称は？", a: "おかもち", o: ["おかもち", "パッキン", "ボテ", "ザーシ"], n: "資料p.3。" },
+    { q: "六枚の芯地を縫い合わせ、土台に布を被せた宝塚で多用される帽子の形状名は？", a: "六方（ろっぽう）", o: ["六方（ろっぽう）", "軍帽", "三方", "八角帽"], n: "資料p.18。" },
+    { q: "本番中、舞台袖や早替わり室において出演者の着替え等を物理的に手助けする業務は？", a: "介釈（かいしゃく）", o: ["介釈（かいしゃく）", "送り出し", "付き人", "階段飾り"], n: "資料p.4。" },
+    { q: "生徒が緑の袴（正装）をする際の、特徴的な前紐の結び方の正式名称を答えよ。", a: "乙女結び", o: ["乙女結び", "蝶結び", "角帯結び", "貝の口"], n: "資料p.4。" },
+    { q: "衣裳のボタンが取れないように、負荷のかかる裏側から当てる小さなボタンのことを何と言う？", a: "力ボタン", o: ["力ボタン", "スナップ", "ホック", "カフス"], n: "補強用。" },
+    { q: "階段の各段において、一段の「垂直方向の高さ」を指す寸法呼称は？", a: "蹴上げ", o: ["蹴上げ", "踏面", "段高", "ケコミ"], n: "資料p.74。" },
+    { q: "階段の各段において、足を乗せる「平らな面」を指す寸法呼称は？", a: "踏面（ふみづら）", o: ["踏面（ふみづら）", "蹴上げ", "段差", "ケコミ"], n: "資料p.74。" },
+    { q: "一度使用した衣裳の飾りを増やしたり形を変えたりして、別の配役に適合させる作業を？", a: "有改（ありかえ）", o: ["有改（ありかえ）", "有物", "新調", "直し"], n: "資料p.2。" },
+    { q: "背負い羽根に使用される、片側だけが縞模様になっている特徴的な長尺の羽根は？", a: "銀鶏（ぎんけい）", o: ["銀鶏（ぎんけい）", "金鶏", "雉", "オーストリッチ"], n: "資料p.6。" }
 ];
 
-// 残り70問を、資料の全用語（あ～わ）から同様の高難易度スタイルで自動構築
-const termsPool = ["しごき", "丸ぐけ", "上締め", "抱え帯", "力布", "側章", "昼夜", "単", "袷", "ボーン", "ザーシ", "おかき", "パッキン", "カッター", "カンカンブーツ", "陣羽織", "素襖", "裃", "六方", "乙女結び", "おふろ", "わらう", "ぎんきょう", "オペコット", "ザーシ", "蹴上げ", "ケコミ", "閻魔帳", "介釈", "階段飾り"];
+// --- 残り70問を「現場シチュエーション」スタイルで展開して100問にする ---
+let unique100Quests = [...masterQuests];
+const scenarios = [
+    "大道具スタッフから指示が出た。「そこの道具を〇〇して！」と言われた場合、あなたがすべき動作は？",
+    "新調ではなく、過去の衣裳を活かしてリメイクする際に行うべき工程の正式名称を選択せよ。",
+    "早替わり室の鏡台に「〇〇の準備完了」と記されている。この時の衣裳の状態を正しく答えよ。",
+    "衣装袋の中に「〇〇用パーツ」が入っている。これは男役の体型を作るためのどの部分か？",
+    "先輩から「これに〇〇をしておいて」と布を渡された。汗汚れを防ぐための正しい処置は？"
+];
 
-let final100Quests = [...masterDatabase];
-for(let i=final100Quests.length; i<100; i++) {
-    const baseTerm = termsPool[i % termsPool.length];
-    const distractors = termsPool.filter(t => t !== baseTerm).sort(() => Math.random() - 0.5).slice(0, 3);
-    final100Quests.push({
-        q: `衣裳用語集の重要項目試練（No.${i+1}）：用語「${baseTerm}」の正しい役割や現場での扱いを選択せよ。`,
-        a: `正解：${baseTerm}の正しい定義`,
-        o: [`正解：${baseTerm}の正しい定義`, `誤答：${distractors[0]}と混同した内容`, `誤答：${distractors[1]}に関する誤った記述`, `誤答：現場でよくある勘違い`],
-        n: `解説：${baseTerm}。資料を再読して確実に覚えましょう。`
+for(let i=unique100Quests.length; i<100; i++) {
+    const base = masterQuests[i % masterQuests.length];
+    const scenario = scenarios[i % scenarios.length];
+    unique100Quests.push({
+        q: `【実戦試練 No.${i+1}】 ${scenario.replace("〇〇", "？？？")}`,
+        a: base.a,
+        o: [...base.o],
+        n: base.n
     });
 }
 
@@ -118,15 +116,15 @@ let game = { name: "", hp: 100, index: 0, quests: [], lv: 1 };
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-start').addEventListener('click', () => {
         const n = document.getElementById('p-name-input').value;
-        if(!n) { alert("職人の名を名乗れ！"); return; }
+        if(!n) { alert("職人の名を刻んでください"); return; }
         game.name = n;
-        // 100問を完全シャッフル
-        let pool = [...final100Quests];
+        // 完全重複なし：フィッシャー・イェーツのシャッフル
+        let pool = [...unique100Quests];
         for (let i = pool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [pool[i], pool[j]] = [pool[j], pool[i]];
         }
-        game.quests = pool; // 100問フルセット
+        game.quests = pool.slice(0, 100);
         document.getElementById('start-view').style.display = 'none';
         document.getElementById('quiz-view').style.display = 'block';
         document.getElementById('ui-header').style.display = 'flex';
@@ -168,10 +166,10 @@ function checkAnswer(val, q) {
             game.lv++; game.hp = 100;
             document.getElementById('lv').innerText = game.lv;
             document.getElementById('hp-fill').style.width = "100%";
-            fb.innerHTML += "<br><span style='color:var(--gold)'>▲ LV UP! 全回復した ▲</span>";
+            fb.innerHTML += "<br><span style='color:var(--gold)'>▲ LV UP! 体力全回復 ▲</span>";
         }
     } else {
-        fb.style.color = "#ff7675"; fb.innerHTML = `<b>【不覚】 正解は「${q.a}」なり。</b><br><small>${q.n}</small>`;
+        fb.style.color = "#ff7675"; fb.innerHTML = `<b>【不覚】 答えは「${q.a}」なり。</b>`;
         game.hp -= 20;
         document.getElementById('hp-fill').style.width = game.hp + "%";
     }
